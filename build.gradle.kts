@@ -70,18 +70,24 @@ paperweight {
             serverPatchDir.set(layout.projectDirectory.dir("patches/server"))
             serverOutputDir.set(layout.projectDirectory.dir("deer-folia-server"))
         }
+        patchTasks.register("generatedApi") {
+            isBareDirectory = true
+            upstreamDirPath = "paper-api-generator/generated"
+            patchDir = layout.projectDirectory.dir("patches/generatedApi")
+            outputDir = layout.projectDirectory.dir("paper-api-generator/generated")
+        }
     }
 }
 
 tasks.register("updateFoliaRef") {
     // 更新 Folia 依赖的最新 commit
-    val tempDir = layout.cacheDir("foliaRefLatest");
-    val file = "gradle.properties";
+    val tempDir = layout.cacheDir("foliaRefLatest")
+    val file = "gradle.properties"
 
     doFirst {
-        val foliaLatestCommitJson = layout.cache.resolve("foliaLatestCommit.json");
-        download.get().download("https://ssl.lunadeer.cn:14446/api/v1/repos/mirror/Folia/commits?sha=master", foliaLatestCommitJson);
-        val foliaLatestCommit = gson.fromJson<paper.libs.com.google.gson.JsonArray>(foliaLatestCommitJson).get(0).asJsonObject.get("sha").asString;
+        val foliaLatestCommitJson = layout.cache.resolve("foliaLatestCommit.json")
+        download.get().download("https://ssl.lunadeer.cn:14446/api/v1/repos/mirror/Folia/commits?sha=master", foliaLatestCommitJson)
+        val foliaLatestCommit = gson.fromJson<paper.libs.com.google.gson.JsonArray>(foliaLatestCommitJson).get(0).asJsonObject.get("sha").asString
 
         copy {
             from(file)

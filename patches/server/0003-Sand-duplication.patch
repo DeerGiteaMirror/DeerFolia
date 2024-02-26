@@ -1,0 +1,117 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: zhangyuheng <zhangyuheng@lunadeer.cn>
+Date: Mon, 26 Feb 2024 22:23:40 +0800
+Subject: [PATCH] Sand duplication
+
+
+diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
+index 0725386d7ef47171012671725ceddfe92b43b203..2ac4b3e55be9aa6d6a6e717d887bcb06c0a13e7b 100644
+--- a/src/main/java/net/minecraft/world/entity/Entity.java
++++ b/src/main/java/net/minecraft/world/entity/Entity.java
+@@ -4046,6 +4046,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+ 
+     protected boolean tryEndPortal() {
+         io.papermc.paper.util.TickThread.ensureTickThread(this, "Cannot portal entity async");
++        if (!(this instanceof net.minecraft.world.entity.player.Player)) return false; // DeerFolia Sand duplication
+         BlockPos pos = this.portalBlock;
+         ServerLevel world = this.portalWorld;
+         this.portalBlock = null;
+@@ -4131,12 +4132,17 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+                         targetPos, 16, // load 16 blocks to be safe from block physics
+                         ca.spottedleaf.concurrentutil.executor.standard.PrioritisedExecutor.Priority.HIGH,
+                         (chunks) -> {
+-                            ServerLevel.makeObsidianPlatform(destination, null, targetPos);
++                            // ServerLevel.makeObsidianPlatform(destination, null, targetPos); // DeerFolia Vanilla end teleportation - moved down
+ 
++                            // DeerFolia start - Vanilla end teleportation
++                            Vec3 finalPos;
++                            if (this instanceof Player) finalPos = Vec3.atBottomCenterOf(targetPos.below());
++                            else finalPos = Vec3.atBottomCenterOf(targetPos);
++                            // DeerFolia end
+                             // the portal obsidian is placed at targetPos.y - 2, so if we want to place the entity
+                             // on the obsidian, we need to spawn at targetPos.y - 1
+                             portalInfoCompletable.complete(
+-                                new PortalInfo(Vec3.atBottomCenterOf(targetPos.below()), Vec3.ZERO, 90.0f, 0.0f, destination, null)
++                                    new PortalInfo(finalPos, this.getDeltaMovement(), 90.0f, 0.0f, destination, null) // DeerFolia Vanilla end teleportation
+                             );
+                         }
+                     );
+@@ -4324,6 +4330,12 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+             return false;
+         }
+ 
++        // DeerFolia start - sync end platform spawning & entity teleportation
++        final java.util.function.Consumer<Entity> tpComplete = type == PortalType.END && destination.getTypeKey() == LevelStem.END
++                ? e -> ServerLevel.makeObsidianPlatform(destination, null, ServerLevel.END_SPAWN_POINT)
++                : teleportComplete;
++        // DeerFolia end - sync end platform spawning & entity teleportation
++
+         Vec3 initialPosition = this.position();
+         ChunkPos initialPositionChunk = new ChunkPos(
+             io.papermc.paper.util.CoordinateUtils.getChunkX(initialPosition),
+@@ -4381,7 +4393,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+             // place
+             passengerTree.root.placeInAsync(
+                 originWorld, destination, Entity.TELEPORT_FLAG_LOAD_CHUNK | (takePassengers ? Entity.TELEPORT_FLAG_TELEPORT_PASSENGERS : 0L),
+-                passengerTree, teleportComplete
++                    passengerTree, tpComplete // DeerFolia vanilla end teleportation
+             );
+         });
+ 
+diff --git a/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java b/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java
+index 05b77bf1af82397c542fde19b54ee545448ce12e..86ebd1de78ffe31959035beadb41c802abd94107 100644
+--- a/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java
++++ b/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java
+@@ -132,11 +132,13 @@ public class FallingBlockEntity extends Entity {
+ 
+     @Override
+     public void tick() {
++        // DeerFolia start - Sand duplication
+         // Paper start - fix sand duping
+-        if (this.isRemoved()) {
+-            return;
+-        }
++        // if (this.isRemoved()) {
++        //     return;
++        // }
+         // Paper end - fix sand duping
++        // DeerFolia end - Sand duplication
+         if (this.blockState.isAir()) {
+             this.discard();
+         } else {
+@@ -148,12 +150,14 @@ public class FallingBlockEntity extends Entity {
+             }
+ 
+             this.move(MoverType.SELF, this.getDeltaMovement());
++            // DeerFolia Sand duplication
+             // Paper start - fix sand duping
+-            if (this.isRemoved()) {
+-                return;
+-            }
++            // if (this.isRemoved()) {
++            //     return;
++            // }
+             // Paper end - fix sand duping
+             // Paper start - Configurable falling blocks height nerf
++            // DeerFolia end - Sand duplication
+             if (this.level().paperConfig().fixes.fallingBlockHeightNerf.test(v -> this.getY() > v)) {
+                 if (this.dropItem && this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
+                     this.spawnAtLocation(block);
+diff --git a/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java b/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java
+index a0c1db8cfebaa0344012cc0af18d6231cdcdcbb8..fc9abf46b9da83255c6a30fc4e38cf09e297ee2f 100644
+--- a/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java
+@@ -61,6 +61,13 @@ public class EndPortalBlock extends BaseEntityBlock {
+                 // return; // CraftBukkit - always fire event in case plugins wish to change it
+             }
+ 
++            // DeerFolia start - Sand duplication
++            if (!(entity instanceof net.minecraft.world.entity.player.Player)) {
++                entity.endPortalLogicAsync();
++                return;
++            }
++            // DeerFolia end - Sand duplication
++
+             // Paper start - move all of this logic into portal tick
+             entity.portalWorld = ((ServerLevel)world);
+             entity.portalBlock = pos.immutable();

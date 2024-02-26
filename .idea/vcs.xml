@@ -4,5 +4,6 @@
     <mapping directory="" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/deer-folia-api" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/deer-folia-server" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/paper-api-generator/generated" vcs="Git" />
   </component>
 </project>
