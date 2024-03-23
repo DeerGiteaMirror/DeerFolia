@@ -19,6 +19,10 @@ jobs:
           java-version: '17'
           distribution: 'zulu'
           cache: 'gradle'
+      - name: "Config Git"
+        run: |
+          git config --global user.email "zhangyuheng@lunadeer.cn
+          git config --global user.name "zhangyuheng"
       - name: "Apply Patches"
         run: ./gradlew applyPatches
       - name: "Build Mojmap"
