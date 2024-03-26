@@ -26,8 +26,8 @@ jobs:
           cache: 'gradle'
       - name: "Config Git"
         run: |
-          git config --global user.email "zhangyuheng@lunadeer.cn"
-          git config --global user.name "zhangyuheng"
+          git config --global user.email "actions@gitea.com"
+          git config --global user.name "actions"
       - name: "Apply Patches"
         run: ./gradlew applyPatches
       - name: "Build Mojmap"
