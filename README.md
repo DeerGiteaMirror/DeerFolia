@@ -7,11 +7,16 @@ DeerFolia 是一个基于 Folia 的 Minecraft 服务器核心，它是由 [Mojan
 - 还原了 [虚空交易](patches/server/0002-Allow-void-trading.patch)；
 - 还原了 [刷沙机制](patches/server/0003-Sand-duplication.patch)；
 
-## 将补丁应用到 Folia 源码
+## 更新上游 Folia 修改
 
 1. 克隆此仓库到本地；
-2. 在终端执行 `./gradlew applyPatches` 应用补丁；
-3. 完成后会在项目目录下生成 `deer-folia-server` 和 `deer-folia-api` ，前者即为源码目录;
+2. 在终端执行 `./gradlew updateFoliaRef` 更新上游 Folia 修改；
+
+## 将补丁应用到 Folia 源码
+
+1. 在终端执行 `./gradlew applyPatches` 应用补丁；
+2. 完成后会在项目目录下生成 `deer-folia-server` 和 `deer-folia-api` ，前者即为源码目录;
+
 
 ## 生成服务器核心
 
