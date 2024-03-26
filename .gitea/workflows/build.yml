@@ -3,12 +3,12 @@ name: Java CI-CD with Gradle
 on:
   push:
     paths:
-      - 'patches/*.patch'
+      - 'patches/**'
       - 'gradle.properties'
       - 'gradle/wrapper/gradle-wrapper.properties'
       - 'build.gradle.kts'
       - 'settings.gradle.kts'
-      - '.gitea/workflows/build.yml'
+      - '.gitea/**'
 
 jobs:
   build:
