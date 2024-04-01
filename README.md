@@ -3,7 +3,11 @@
 DeerFolia 是一个基于 [Folia](https://papermc.io/software/folia) 的 Minecraft
 服务器核心，它是由 [Mojang](https://mojang.com) 的 Minecraft 服务器核心 [Paper](https://papermc.io) 修改而来。
 
-![](https://ssl.lunadeer.cn:14437/i/2024/03/26/660237f7388c3.png)
+<div style="text-align: center;">
+
+<img src="https://ssl.lunadeer.cn:14437/i/2024/04/01/660a164f1873d.png" alt="" width="70%">
+
+</div>
 
 ## 此分支特性
 
