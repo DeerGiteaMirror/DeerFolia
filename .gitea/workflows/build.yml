@@ -41,7 +41,7 @@ jobs:
           ln -s /usr/local/go/bin/go /usr/bin/go
           go version
       - name: "Release"
-        uses: https://ssl.lunadeer.cn:14446/zhangyuheng/release-action@main
+        uses: https://ssl.lunadeer.cn:14446/actions/release-action@main
         with:
           files: |-
             staging/*.jar
