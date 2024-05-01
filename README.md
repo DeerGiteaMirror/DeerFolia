@@ -14,10 +14,6 @@ DeerFolia 是一个基于 [Folia](https://papermc.io/software/folia) 的 Minecra
 - 还原了 [虚空交易](patches/server/0002-Allow-void-trading.patch)；
 - 还原了 [刷沙机制](patches/server/0003-Sand-duplication.patch)；
 
-## 更新上游 Folia 修改
-
-1. 在终端执行 `./gradlew updateFoliaRef` 更新上游 Folia 修改；
-
 ## 将补丁应用到 Folia 源码
 
 1. 在终端执行 `./gradlew applyPatches` 应用补丁；
@@ -49,11 +45,11 @@ DeerFolia 是一个基于 [Folia](https://papermc.io/software/folia) 的 Minecra
 1. 在 `deer-folia-server` 或 `deer-folia-api` 目录中执行 `git rebase -i base`
    ，应该会输出 [这样的](https://gist.github.com/zachbr/21e92993cb99f62ffd7905d7b02f3159) 内容。
 2. 将你需要修改的补丁由 `pick` 替换为 `edit` 然后保存退出；
-    - 一次只能修改 **一个** 文件！
+   - 一次只能修改 **一个** 文件！
 3. 对你需要修改的补丁作出新的修改；
 4. 使用 `git add .` 添加补丁，再使用 `git commit --amend` 提交；
-    - **确保添加了 `--amend` 选项** 否则将会创建一个新补丁而不是修改原补丁。
-    - 此处提交时也可以修改补丁信息。
+   - **确保添加了 `--amend` 选项** 否则将会创建一个新补丁而不是修改原补丁。
+   - 此处提交时也可以修改补丁信息。
 5. 终端执行 `git rebase --continue` 应用更新；
 6. 再在跟项目目录执行 `./gradlew rebuildPatches` 生成新的补丁；
 
@@ -69,16 +65,23 @@ DeerFolia 是一个基于 [Folia](https://papermc.io/software/folia) 的 Minecra
 2. 提交修改（可以不写提交内容）；
 3. 在 `deer-folia-server` 或 `deer-folia-api` 目录中执行 `git rebase -i base` ，将刚才的提交移动到你想要修改的补丁提交下方；
 4. 将新提交的 `pick` 修改为如下内容：
-    - `f`/`fixup`：将你的新修改合并到补丁内，但不改变补丁信息；
-    - `s`/`squash`：将你的新修改合并到补丁内，并用新的补丁信息替换原补丁信息；
+   - `f`/`fixup`：将你的新修改合并到补丁内，但不改变补丁信息；
+   - `s`/`squash`：将你的新修改合并到补丁内，并用新的补丁信息替换原补丁信息；
 5. 在跟项目目录执行 `./gradlew rebuildPatches` 应用补丁更新；
 
 #### 自动
 
 1. 修改相应位置源码；
 2. 提交修改内容 `git commit -a --fixup <要修改的补丁 hash 值>`；
-    - 如果希望更新补丁信息，你可以使用 `--squash` 替换 `--fixup`；
-    - 如果你不知道要修改的补丁 hash 值，你可以使用 `git log` 查看；
-    - 如果你只知道补丁的名称，你可以使用 `git log --grep=<补丁名称>` 查看；
+   - 如果希望更新补丁信息，你可以使用 `--squash` 替换 `--fixup`；
+   - 如果你不知道要修改的补丁 hash 值，你可以使用 `git log` 查看；
+   - 如果你只知道补丁的名称，你可以使用 `git log --grep=<补丁名称>` 查看；
 3. 执行 `git rebase -i --autosquash base` ，这将会自动将你的修改移动到对应的补丁下方；
 4. 在跟项目目录执行 `./gradlew rebuildPatches` 应用补丁更新；
+
+## 更新上游 Folia 修改
+
+1. 在终端执行 `./gradlew updateFoliaRef` 更新上游 Folia 修改；
+2. 应用更新的补丁：`./gradlew applyPatches`。
+3. 如果存在冲突，解决冲突，然后运行 `git am --continue` 继续应用补丁；
+4. 全部补丁应用完成后，更新补丁：`./gradlew rebuildPatches`。

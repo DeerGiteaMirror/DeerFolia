@@ -5,10 +5,10 @@ Subject: [PATCH] Sand duplication
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 0725386d7ef47171012671725ceddfe92b43b203..2ac4b3e55be9aa6d6a6e717d887bcb06c0a13e7b 100644
+index 1119b6a7f307763c13ef48bcd7643539082aebdc..4db9cb498104a6b3845828991b9a6ea03ac3194a 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -4046,6 +4046,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -4065,6 +4065,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
  
      protected boolean tryEndPortal() {
          io.papermc.paper.util.TickThread.ensureTickThread(this, "Cannot portal entity async");
@@ -16,7 +16,7 @@ index 0725386d7ef47171012671725ceddfe92b43b203..2ac4b3e55be9aa6d6a6e717d887bcb06
          BlockPos pos = this.portalBlock;
          ServerLevel world = this.portalWorld;
          this.portalBlock = null;
-@@ -4131,12 +4132,17 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -4150,12 +4151,17 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
                          targetPos, 16, // load 16 blocks to be safe from block physics
                          ca.spottedleaf.concurrentutil.executor.standard.PrioritisedExecutor.Priority.HIGH,
                          (chunks) -> {
@@ -36,7 +36,7 @@ index 0725386d7ef47171012671725ceddfe92b43b203..2ac4b3e55be9aa6d6a6e717d887bcb06
                              );
                          }
                      );
-@@ -4324,6 +4330,12 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -4343,6 +4349,12 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
              return false;
          }
  
@@ -49,7 +49,7 @@ index 0725386d7ef47171012671725ceddfe92b43b203..2ac4b3e55be9aa6d6a6e717d887bcb06
          Vec3 initialPosition = this.position();
          ChunkPos initialPositionChunk = new ChunkPos(
              io.papermc.paper.util.CoordinateUtils.getChunkX(initialPosition),
-@@ -4381,7 +4393,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -4400,7 +4412,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
              // place
              passengerTree.root.placeInAsync(
                  originWorld, destination, Entity.TELEPORT_FLAG_LOAD_CHUNK | (takePassengers ? Entity.TELEPORT_FLAG_TELEPORT_PASSENGERS : 0L),
@@ -58,47 +58,8 @@ index 0725386d7ef47171012671725ceddfe92b43b203..2ac4b3e55be9aa6d6a6e717d887bcb06
              );
          });
  
-diff --git a/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java b/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java
-index 05b77bf1af82397c542fde19b54ee545448ce12e..86ebd1de78ffe31959035beadb41c802abd94107 100644
---- a/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java
-+++ b/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java
-@@ -132,11 +132,13 @@ public class FallingBlockEntity extends Entity {
- 
-     @Override
-     public void tick() {
-+        // DeerFolia start - Sand duplication
-         // Paper start - fix sand duping
--        if (this.isRemoved()) {
--            return;
--        }
-+        // if (this.isRemoved()) {
-+        //     return;
-+        // }
-         // Paper end - fix sand duping
-+        // DeerFolia end - Sand duplication
-         if (this.blockState.isAir()) {
-             this.discard();
-         } else {
-@@ -148,12 +150,14 @@ public class FallingBlockEntity extends Entity {
-             }
- 
-             this.move(MoverType.SELF, this.getDeltaMovement());
-+            // DeerFolia Sand duplication
-             // Paper start - fix sand duping
--            if (this.isRemoved()) {
--                return;
--            }
-+            // if (this.isRemoved()) {
-+            //     return;
-+            // }
-             // Paper end - fix sand duping
-             // Paper start - Configurable falling blocks height nerf
-+            // DeerFolia end - Sand duplication
-             if (this.level().paperConfig().fixes.fallingBlockHeightNerf.test(v -> this.getY() > v)) {
-                 if (this.dropItem && this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
-                     this.spawnAtLocation(block);
 diff --git a/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java b/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java
-index a0c1db8cfebaa0344012cc0af18d6231cdcdcbb8..fc9abf46b9da83255c6a30fc4e38cf09e297ee2f 100644
+index afc9445941b984cc1122839e4a8a17cf27aa966e..d81fbb3a7911b06d8726c7aa2ddbb276fe541023 100644
 --- a/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java
 @@ -61,6 +61,13 @@ public class EndPortalBlock extends BaseEntityBlock {

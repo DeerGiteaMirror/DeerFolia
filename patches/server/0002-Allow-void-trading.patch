@@ -5,10 +5,10 @@ Subject: [PATCH] Allow void trading
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index ec25610cbffe30fecaeaadf9098e187bc15b5405..1de531dcb0d5c64a5459d9057b50fadcd9089b87 100644
+index 36f1af9ef5fca7c45f250470d21a4dfbf573ceac..2eea25d4912f6b88f1a5febc4227ccf6ce4158fb 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
-@@ -3044,10 +3044,11 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -3057,10 +3057,11 @@ public class ServerLevel extends Level implements WorldGenLevel {
              // Spigot end
              // Spigot Start
              if (entity.getBukkitEntity() instanceof org.bukkit.inventory.InventoryHolder && (!(entity instanceof ServerPlayer) || entity.getRemovalReason() != Entity.RemovalReason.KILLED)) { // SPIGOT-6876: closeInventory clears death message

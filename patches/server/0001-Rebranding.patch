@@ -5,7 +5,7 @@ Subject: [PATCH] Rebranding
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 08d434023226af0d2c469055a3b2188fe8a4ed38..0e9e28445f0673f39120e50fd9c80ad0d75f4eac 100644
+index 12f9f9d46c098c5c88058cb1f73ae39a7d1debd5..caf0bb80ab3b694d9a80a6044d2c43c4245a574a 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -14,7 +14,7 @@ val alsoShade: Configuration by configurations.creating
@@ -17,7 +17,7 @@ index 08d434023226af0d2c469055a3b2188fe8a4ed38..0e9e28445f0673f39120e50fd9c80ad0
      implementation("io.papermc.paper:paper-mojangapi:${project.version}") {
          exclude("io.papermc.paper", "paper-api")
      }
-@@ -74,7 +74,7 @@ tasks.jar {
+@@ -75,7 +75,7 @@ tasks.jar {
          attributes(
              "Main-Class" to "org.bukkit.craftbukkit.Main",
              "Implementation-Title" to "CraftBukkit",
@@ -117,7 +117,7 @@ index 99c5038672b09d0874125e3df280174c1e8151e6..f44fbef4372b3c6ba3e1e6f81de469b2
          stringbuilder.append(CrashReport.DATE_TIME_FORMATTER.format(ZonedDateTime.now()));
          stringbuilder.append("\n");
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 3ec07e77748ee9bb21f9d09230f935bca2217e4d..ef7f77b4643a83ae241f8bb91e2b41bbd4fa6470 100644
+index 453bb595d31c6dea1cfb135f43ffe71e4ae44112..d7340fe97da3e0b0f1b8e83ba102047497d6676b 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -1025,7 +1025,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
@@ -130,7 +130,7 @@ index 3ec07e77748ee9bb21f9d09230f935bca2217e4d..ef7f77b4643a83ae241f8bb91e2b41bb
                  this.getRunningThread().stop();
                  try {
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 853afba9d0a814acc001ba5db5ef3653f8b16392..15ecf9e10cce687536b7aa134390263cd90e5a53 100644
+index 9dd9e86a5f7f30ce37b906ebfe4bccad0e52577f..1d603ae9559152ee7ebe30f12ac012e440b4db73 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -266,7 +266,7 @@ import javax.annotation.Nullable; // Paper
@@ -143,10 +143,10 @@ index 853afba9d0a814acc001ba5db5ef3653f8b16392..15ecf9e10cce687536b7aa134390263c
      private final String bukkitVersion = Versioning.getBukkitVersion();
      private final Logger logger = Logger.getLogger("Minecraft");
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
-index 6abb7ee0f5d32613b2ff7da09810ae407e293838..bcf0813afaa4fcbd66a39f1db14317e53de11f97 100644
+index ee1d3f33cf5f3cfc7909dbc33178df69bd656ab8..6b54d70cc35ce72cc00392233528e680ee296754 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
-@@ -961,7 +961,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
+@@ -977,7 +977,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
              return EntityCategory.WATER;
          }
  
