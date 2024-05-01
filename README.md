@@ -82,3 +82,18 @@ DeerFolia 是一个基于 [Folia](https://papermc.io/software/folia) 的 Minecra
     - 如果你只知道补丁的名称，你可以使用 `git log --grep=<补丁名称>` 查看；
 3. 执行 `git rebase -i --autosquash base` ，这将会自动将你的修改移动到对应的补丁下方；
 4. 在跟项目目录执行 `./gradlew rebuildPatches` 应用补丁更新；
+
+## 更新上游分支 （Rebasing PRs）
+
+这些步骤假定 origin 远程是您对此存储库的分支，而 upstream 是官方 PaperMC 存储库。
+
+1. 从 upstream 的 master 分支拉取最新更改：`git checkout master && git pull upstream master`。 
+2. 切换到功能/修复分支并基于 master 进行 rebase：`git checkout patch-branch && git rebase master`。 
+3. 应用更新的补丁：`./gradlew applyPatches`。 
+4. 如果出现冲突，解决冲突。 
+5. 如果您的 PR 创建新的补丁而不是修改现有的补丁，在 `deer-folia-server` 和 `deer-folia-api` 目录中，请确保您新创建的补丁是最后一次提交，方法有两种： 
+   - 将补丁文件重命名为一个以大型 4 位数字开头的数字（例如，9999-Patch-to-add-some-new-stuff.patch），然后重新应用补丁。
+   - 运行 `git rebase --interactive base` 并将提交移动到末尾。
+6. 重新构建补丁：`./gradlew rebuildPatches`。 
+7. 提交修改后的补丁。 
+8. 强制推送更改：`git push --force`。
