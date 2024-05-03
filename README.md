@@ -1,7 +1,8 @@
 # DeerFolia
 
-DeerFolia 是一个基于 [Folia](https://papermc.io/software/folia) 的 Minecraft
-服务器核心，它是由 [Mojang](https://mojang.com) 的 Minecraft 服务器核心 [Paper](https://papermc.io) 修改而来。
+DeerFolia 是一个基于 [Folia](https://papermc.io/software/folia) 的 Minecraft 服务器核心，它们是由 [Mojang](https://mojang.com) 的 Minecraft 服务器核心修改而来。
+
+而 Folia 是由  [Paper](https://papermc.io/software/paper) 修改而来，Paper 核心修复了很多原版 Minecraft 的有趣特性，由于 Folia 直接继承自 Paper，因此也同时继承了这些消失的特性。这也是为什么很多服主选择了 Purpur，不过 Purpur 官方已经明确表示不会基于 Folia 开发一个新的具备原版特性的分支。
 
 <div style="text-align: center;">
 
@@ -9,22 +10,31 @@ DeerFolia 是一个基于 [Folia](https://papermc.io/software/folia) 的 Minecra
 
 </div>
 
+## 本分支相比于其他 Folia 分支有何特点？
+
+### 1. 最小修改：在还原原版机制的基础上保持对 Folia 及上游 Paper 相关补丁的最小修改，避免潜在的意外bug；
+
+### 2. 无需配置：不引入任何自定义的配置，虽然这意味着本分支的特性无法自行开关，但同时也减轻了部署负担，不用去理解额外的配置内容；
+
 ## 此分支特性
 
-- 还原了 [虚空交易](patches/server/0002-Allow-void-trading.patch)；
-- 还原了 [刷沙机制](patches/server/0003-Sand-duplication.patch)；
+- 还原了 [虚空交易](https://ssl.lunadeer.cn:14446/zhangyuheng/DeerFolia/src/branch/master/patches/server/0002-Allow-void-trading.patch)；
+- 还原了 [刷沙机制](https://ssl.lunadeer.cn:14446/zhangyuheng/DeerFolia/src/branch/master/patches/server/0003-Sand-duplication.patch)；
 
-## 将补丁应用到 Folia 源码
+## 如何自行编译
 
-1. 在终端执行 `./gradlew applyPatches` 应用补丁；
-2. 完成后会在项目目录下生成 `deer-folia-server` 和 `deer-folia-api` ，前者即为源码目录;
+### 将补丁应用到 Folia 源码
 
-## 生成服务器核心
+1. 克隆本仓库到本地；
+2. 在终端执行 `./gradlew applyPatches` 应用补丁；
+3. 完成后会在项目目录下生成 `deer-folia-server` 和 `deer-folia-api` ，前者即为源码目录;
 
-1. 应用补丁；
+### 生成服务器核心
+
+1. 按照上一步应用补丁；
 2. 执行 `./gradlew createMojmapPaperclipJar` ，完成后会在 `build/libs` 下生成服务器核心文件；
 
-## 添加新补丁
+## 如何添加新补丁
 
 1. 修改 `deer-folia-server` 或 `deer-folia-api` 中的源码；
 2. 在 `deer-folia-server` 或 `deer-folia-api` 目录中将修改内容添加 `git add .` 并提交 `git commit` ，填写补丁信息；
@@ -83,5 +93,5 @@ DeerFolia 是一个基于 [Folia](https://papermc.io/software/folia) 的 Minecra
 
 1. 在终端执行 `./gradlew updateFoliaRef` 更新上游 Folia 修改；
 2. 应用更新的补丁：`./gradlew applyPatches`。
-3. 如果存在冲突，解决冲突，然后运行 `git am --continue` 继续应用补丁；
+3. 如果存在冲突，解决冲突，然后在`deer-folia-server` 或 `deer-folia-api`目录运行 `git am --continue` 继续应用补丁；
 4. 全部补丁应用完成后，更新补丁：`./gradlew rebuildPatches`。
