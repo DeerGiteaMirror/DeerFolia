@@ -87,5 +87,7 @@ DeerFolia 是一个基于 [Folia](https://papermc.io/software/folia) 的 Minecra
 
 1. 在终端执行 `./gradlew updateFoliaRef` 更新上游 Folia 修改；
 2. 应用更新的补丁：`./gradlew applyPatches`。
-3. 如果存在冲突，解决冲突，然后在`deer-folia-server` 或 `deer-folia-api`目录运行 `git am --continue` 继续应用补丁；
-4. 全部补丁应用完成后，更新补丁：`./gradlew rebuildPatches`。
+3. 如果存在冲突，解决冲突后执行 `git add .` 将解决完的文件添加到暂存区；
+4. 然后在`deer-folia-server` 或 `deer-folia-api`目录运行 `git am --resolved`；
+5. 如果存在新的冲突，重复步骤 3 和 4；
+6. 全部补丁应用完成后，更新补丁：`./gradlew rebuildPatches`。
