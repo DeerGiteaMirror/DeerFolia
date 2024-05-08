@@ -26,7 +26,7 @@ jobs:
       - name: "Apply Patches"
         run: ./gradlew applyPatches
       - name: "Build Mojmap"
-        run: ./gradlew createMojmapPaperclipJar
+        run: ./gradlew createReobfPaperclipJar
       - name: "Copy jar to staging"
         run: mkdir staging && cp build/libs/*.jar staging
       - name: "Setup go for release script"
