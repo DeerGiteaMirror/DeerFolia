@@ -26,7 +26,7 @@ DeerFolia 是一个基于 [Folia](https://papermc.io/software/folia) 的 Minecra
 1. 克隆本仓库到本地；
 2. 在终端执行 `./gradlew applyPatches` 应用补丁；
 3. 完成后会在项目目录下生成 `deer-folia-server` 和 `deer-folia-api` ，前者即为源码目录;
-4. 执行 `./gradlew createMojmapPaperclipJar` ，完成后会在 `build/libs` 下生成服务器核心文件；
+4. 执行 `./gradlew createReobfPaperclipJar` ，完成后会在 `build/libs` 下生成服务器核心文件；
 
 ## 如何添加新补丁
 

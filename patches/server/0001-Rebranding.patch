@@ -5,27 +5,37 @@ Subject: [PATCH] Rebranding
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 12f9f9d46c098c5c88058cb1f73ae39a7d1debd5..caf0bb80ab3b694d9a80a6044d2c43c4245a574a 100644
+index eb2f9941b24af591f1e56339b97f5284a765cf81..98714f15efad5d871f7b991a3032420a87a79a95 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
-@@ -14,7 +14,7 @@ val alsoShade: Configuration by configurations.creating
+@@ -13,7 +13,7 @@ configurations.named(log4jPlugins.compileClasspathConfigurationName) {
+ val alsoShade: Configuration by configurations.creating
  
  dependencies {
-     // Folia start
--    implementation(project(":folia-api"))
-+    implementation(project(":deer-folia-api"))
-     implementation("io.papermc.paper:paper-mojangapi:${project.version}") {
-         exclude("io.papermc.paper", "paper-api")
-     }
-@@ -75,7 +75,7 @@ tasks.jar {
+-    implementation(project(":folia-api")) // Folia
++    implementation(project(":deer-folia-api")) // Folia
+     // Paper start
+     implementation("org.jline:jline-terminal-jansi:3.21.0")
+     implementation("net.minecrell:terminalconsoleappender:1.3.0")
+@@ -80,14 +80,14 @@ tasks.jar {
+         val gitBranch = git("rev-parse", "--abbrev-ref", "HEAD").getText().trim() // Paper
          attributes(
              "Main-Class" to "org.bukkit.craftbukkit.Main",
-             "Implementation-Title" to "CraftBukkit",
--            "Implementation-Version" to "git-Folia-$implementationVersion", // Folia
-+            "Implementation-Version" to "git-DeerFolia-$implementationVersion", // Folia
+-            "Implementation-Title" to "Folia", // Folia
++            "Implementation-Title" to "DeerFolia", // Folia // DeerFolia
+             "Implementation-Version" to implementationVersion,
              "Implementation-Vendor" to date, // Paper
-             "Specification-Title" to "Bukkit",
+-            "Specification-Title" to "Folia", // Folia
++            "Specification-Title" to "DeerFolia", // Folia  // DeerFolia
              "Specification-Version" to project.version,
+             "Specification-Vendor" to "Paper Team",
+-            "Brand-Id" to "papermc:folia", // Folia
+-            "Brand-Name" to "Folia", // Folia
++            "Brand-Id" to "lunadeer:deerfolia", // Folia   // DeerFolia
++            "Brand-Name" to "DeerFolia", // Folia   // DeerFolia
+             "Build-Number" to (build ?: ""),
+             "Build-Time" to Instant.now().toString(),
+             "Git-Branch" to gitBranch, // Paper
 diff --git a/src/main/java/com/destroystokyo/paper/Metrics.java b/src/main/java/com/destroystokyo/paper/Metrics.java
 index cb60d58d4a7556dd896f31d0cd249f860bb3ef84..bad1284f624a25ec9aeb0c5ce67c4ec6fecdd031 100644
 --- a/src/main/java/com/destroystokyo/paper/Metrics.java
@@ -51,45 +61,45 @@ index cb60d58d4a7556dd896f31d0cd249f860bb3ef84..bad1284f624a25ec9aeb0c5ce67c4ec6
                  metrics.addCustomChart(new Metrics.DrilldownPie("java_version", () -> {
                      Map<String, Map<String, Integer>> map = new HashMap<>();
 diff --git a/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java b/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java
-index e2f704c115fd6e00960bb56bb0779f1100c89c17..a54a0fadb45c6b506c93c51e96fb5502a0e2b6cb 100644
+index 29bd788ae8bc61c1e62a4f84b9e259931a7041ce..b8c7cc67aa89d3dee4f613f05511c04792107f8b 100644
 --- a/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java
 +++ b/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java
-@@ -20,7 +20,11 @@ import java.util.stream.StreamSupport;
- public class PaperVersionFetcher implements VersionFetcher {
-     private static final java.util.regex.Pattern VER_PATTERN = java.util.regex.Pattern.compile("^([0-9\\.]*)\\-.*R"); // R is an anchor, will always give '-R' at end
-     private static final String GITHUB_BRANCH_NAME = "master";
+@@ -35,22 +35,29 @@ public class PaperVersionFetcher implements VersionFetcher {
+     private static final Logger LOGGER = LogUtils.getClassLogger();
+     private static final int DISTANCE_ERROR = -1;
+     private static final int DISTANCE_UNKNOWN = -2;
 -    private static final String DOWNLOAD_PAGE = "https://papermc.io/downloads/paper";
-+
 +    // DeerFolia start
 +    private static final String DOWNLOAD_PAGE = "https://ssl.lunadeer.cn:14446/zhangyuheng/DeerFolia/releases";
 +    // DeerFolia end
+ 
+     @Override
+     public long getCacheTime() {
+         return 720000;
+     }
+ 
 +
-     private static @Nullable String mcVer;
- 
      @Override
-@@ -31,8 +35,11 @@ public class PaperVersionFetcher implements VersionFetcher {
-     @Nonnull
-     @Override
-     public Component getVersionMessage(@Nonnull String serverVersion) {
--        String[] parts = serverVersion.substring("git-Folia-".length()).split("[-\\s]"); // Folia
--        final Component updateMessage = getUpdateStatusMessage("PaperMC/Folia", GITHUB_BRANCH_NAME, parts[0]); // Folia
-+        String[] parts = serverVersion.substring("git-DeerFolia-".length()).split("[-\\s]"); // Folia // DeerFolia
+     public Component getVersionMessage(final String serverVersion) {
+         final Component updateMessage;
+         final ServerBuildInfo build = ServerBuildInfo.buildInfo();
+-        if (build.buildNumber().isEmpty() && build.gitCommit().isEmpty()) {
+-            updateMessage = text("You are running a development version without access to version information", color(0xFF5300));
+-        } else {
+-            updateMessage = getUpdateStatusMessage("PaperMC/Folia", build); // Folia
+-        }
 +        // DeerFolia start - Disable update check
-+        // final Component updateMessage = getUpdateStatusMessage("PaperMC/Folia", GITHUB_BRANCH_NAME, parts[0]); // Folia
-+        final Component updateMessage = Component.text("DeerFolia current does not support update check", NamedTextColor.YELLOW); // DeerFolia
-+        // DeerFolia end  - Disable update check
-         final Component history = getHistory();
++        updateMessage = Component.text("DeerFolia current does not support update check", NamedTextColor.YELLOW);
++        return updateMessage;
++        // if (build.buildNumber().isEmpty() && build.gitCommit().isEmpty()) {
++        //     updateMessage = text("You are running a development version without access to version information", color(0xFF5300));
++        // } else {
++        //     updateMessage = getUpdateStatusMessage("PaperMC/Folia", build); // Folia
++        // }
++        // DeerFolia end - Disable update check
+         final @Nullable Component history = this.getHistory();
  
-         return history != null ? TextComponent.ofChildren(updateMessage, Component.newline(), history) : updateMessage;
-@@ -45,7 +52,7 @@ public class PaperVersionFetcher implements VersionFetcher {
-                 String result = matcher.group();
-                 mcVer = result.substring(0, result.length() - 2); // strip 'R' anchor and trailing '-'
-             } else {
--                org.bukkit.Bukkit.getLogger().warning("Unable to match version to pattern! Report to PaperMC!");
-+                org.bukkit.Bukkit.getLogger().warning("Unable to match version to pattern! Report to DeerFolia!");
-                 org.bukkit.Bukkit.getLogger().warning("Pattern: " + VER_PATTERN.toString());
-                 org.bukkit.Bukkit.getLogger().warning("Version: " + org.bukkit.Bukkit.getBukkitVersion());
-             }
+         return history != null ? Component.textOfChildren(updateMessage, Component.newline(), history) : updateMessage;
 diff --git a/src/main/java/com/destroystokyo/paper/console/PaperConsole.java b/src/main/java/com/destroystokyo/paper/console/PaperConsole.java
 index c5d5648f4ca603ef2b1df723b58f9caf4dd3c722..d5c8b196c1282eecd74ce046242700b57cfde140 100644
 --- a/src/main/java/com/destroystokyo/paper/console/PaperConsole.java
@@ -104,7 +114,7 @@ index c5d5648f4ca603ef2b1df723b58f9caf4dd3c722..d5c8b196c1282eecd74ce046242700b5
                  .completer(new ConsoleCommandCompleter(this.server))
                  .option(LineReader.Option.COMPLETE_IN_WORD, true);
 diff --git a/src/main/java/net/minecraft/CrashReport.java b/src/main/java/net/minecraft/CrashReport.java
-index 99c5038672b09d0874125e3df280174c1e8151e6..f44fbef4372b3c6ba3e1e6f81de469b2f764558d 100644
+index 4f3cc14d48690bb183d09bb7a5ba1e23e8a0c08a..c5d137a9ec9ef3f85bae5cad5d6043506ea84ee3 100644
 --- a/src/main/java/net/minecraft/CrashReport.java
 +++ b/src/main/java/net/minecraft/CrashReport.java
 @@ -127,7 +127,7 @@ public class CrashReport {
@@ -117,10 +127,10 @@ index 99c5038672b09d0874125e3df280174c1e8151e6..f44fbef4372b3c6ba3e1e6f81de469b2
          stringbuilder.append(CrashReport.DATE_TIME_FORMATTER.format(ZonedDateTime.now()));
          stringbuilder.append("\n");
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 453bb595d31c6dea1cfb135f43ffe71e4ae44112..d7340fe97da3e0b0f1b8e83ba102047497d6676b 100644
+index 4c9c227c1395744128f347e9303f8a13667a4aa3..232d1bf860353250d91b9870f6a9b5442e36b32e 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1025,7 +1025,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1028,7 +1028,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          shutdownThread = Thread.currentThread();
          org.spigotmc.WatchdogThread.doStop(); // Paper
          if (false && !isSameThread()) { // Folia - region threading
@@ -129,32 +139,6 @@ index 453bb595d31c6dea1cfb135f43ffe71e4ae44112..d7340fe97da3e0b0f1b8e83ba1020474
              while (this.getRunningThread().isAlive()) {
                  this.getRunningThread().stop();
                  try {
-diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 9dd9e86a5f7f30ce37b906ebfe4bccad0e52577f..1d603ae9559152ee7ebe30f12ac012e440b4db73 100644
---- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-+++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-@@ -266,7 +266,7 @@ import javax.annotation.Nullable; // Paper
- import javax.annotation.Nonnull; // Paper
- 
- public final class CraftServer implements Server {
--    private final String serverName = "Folia"; // Folia // Paper
-+    private final String serverName = "DeerFolia"; // DeerFolia // Folia // Paper
-     private final String serverVersion;
-     private final String bukkitVersion = Versioning.getBukkitVersion();
-     private final Logger logger = Logger.getLogger("Minecraft");
-diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
-index ee1d3f33cf5f3cfc7909dbc33178df69bd656ab8..6b54d70cc35ce72cc00392233528e680ee296754 100644
---- a/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
-+++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
-@@ -977,7 +977,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
-             return EntityCategory.WATER;
-         }
- 
--        throw new UnsupportedOperationException("Unsupported monster type: " + type + ". This is a bug, report this to Spigot.");
-+        throw new UnsupportedOperationException("Unsupported monster type: " + type + ". This is a bug, report this to DeerFolia."); // DeerFolia
-     }
- 
-     @Override
 diff --git a/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java b/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java
 index b00e3b9b628f3d2a2fdbf1d2c77904963c16d3ac..989ade9becdf3076d2e2a861e76a375078f42485 100644
 --- a/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java
@@ -182,7 +166,7 @@ index e9b6ca3aa25e140467ae866d572483050ea3fa0e..4b84eb8ceb719bb6b4dc281b32c5b67b
  
          if (stream != null) {
 diff --git a/src/main/java/org/spigotmc/WatchdogThread.java b/src/main/java/org/spigotmc/WatchdogThread.java
-index 9e638f72f180ff5ef63ec3dd6cf548c53f7bd4a5..ae48367c8a1430485272d4e8333f091aeb8f1e19 100644
+index 6db566e3111ec08a99aa429624979cb83a85e272..e78695dd2f6f1d9d8106078727974c71a339d7d4 100644
 --- a/src/main/java/org/spigotmc/WatchdogThread.java
 +++ b/src/main/java/org/spigotmc/WatchdogThread.java
 @@ -155,14 +155,14 @@ public final class WatchdogThread extends io.papermc.paper.util.TickThread // Pa

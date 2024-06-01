@@ -5,10 +5,10 @@ Subject: [PATCH] Sand duplication
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 1119b6a7f307763c13ef48bcd7643539082aebdc..4db9cb498104a6b3845828991b9a6ea03ac3194a 100644
+index d8be7c8dca41b6ad6d9a28590be9e33ef9045bdb..4045e773607227d5bf2b20072d2fea3d520548cb 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -4065,6 +4065,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -4112,6 +4112,7 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
  
      protected boolean tryEndPortal() {
          io.papermc.paper.util.TickThread.ensureTickThread(this, "Cannot portal entity async");
@@ -16,7 +16,7 @@ index 1119b6a7f307763c13ef48bcd7643539082aebdc..4db9cb498104a6b3845828991b9a6ea0
          BlockPos pos = this.portalBlock;
          ServerLevel world = this.portalWorld;
          this.portalBlock = null;
-@@ -4150,12 +4151,17 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -4197,12 +4198,17 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
                          targetPos, 16, // load 16 blocks to be safe from block physics
                          ca.spottedleaf.concurrentutil.executor.standard.PrioritisedExecutor.Priority.HIGH,
                          (chunks) -> {
@@ -36,7 +36,7 @@ index 1119b6a7f307763c13ef48bcd7643539082aebdc..4db9cb498104a6b3845828991b9a6ea0
                              );
                          }
                      );
-@@ -4343,6 +4349,12 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -4390,6 +4396,12 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
              return false;
          }
  
@@ -49,7 +49,7 @@ index 1119b6a7f307763c13ef48bcd7643539082aebdc..4db9cb498104a6b3845828991b9a6ea0
          Vec3 initialPosition = this.position();
          ChunkPos initialPositionChunk = new ChunkPos(
              io.papermc.paper.util.CoordinateUtils.getChunkX(initialPosition),
-@@ -4400,7 +4412,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource, S
+@@ -4447,7 +4459,7 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
              // place
              passengerTree.root.placeInAsync(
                  originWorld, destination, Entity.TELEPORT_FLAG_LOAD_CHUNK | (takePassengers ? Entity.TELEPORT_FLAG_TELEPORT_PASSENGERS : 0L),
@@ -59,7 +59,7 @@ index 1119b6a7f307763c13ef48bcd7643539082aebdc..4db9cb498104a6b3845828991b9a6ea0
          });
  
 diff --git a/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java b/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java
-index afc9445941b984cc1122839e4a8a17cf27aa966e..d81fbb3a7911b06d8726c7aa2ddbb276fe541023 100644
+index aeac09f628bd04070fd302842c304a7dfd39b229..207e55e072a035b5126cf45cabca6e57e0a9ba89 100644
 --- a/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java
 @@ -61,6 +61,13 @@ public class EndPortalBlock extends BaseEntityBlock {

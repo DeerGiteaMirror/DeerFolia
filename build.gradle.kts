@@ -3,7 +3,7 @@ import io.papermc.paperweight.util.*
 plugins {
     java
     id("com.github.johnrengelman.shadow") version "8.1.1" apply false
-    id("io.papermc.paperweight.patcher") version "1.5.12"
+    id("io.papermc.paperweight.patcher") version "1.7.1"
 }
 
 allprojects {
@@ -11,7 +11,7 @@ allprojects {
 
     java {
         toolchain {
-            languageVersion.set(JavaLanguageVersion.of(17))
+            languageVersion.set(JavaLanguageVersion.of(21))
         }
     }
 }
@@ -28,15 +28,15 @@ repositories {
 }
 
 dependencies {
-    remapper("net.fabricmc:tiny-remapper:0.10.1:fat")
-    decompiler("net.minecraftforge:forgeflower:2.0.627.2")
+    remapper("net.fabricmc:tiny-remapper:0.10.2:fat")
+    decompiler("org.vineflower:vineflower:1.10.1")
     paperclip("io.papermc:paperclip:3.0.3")
 }
 
 subprojects {
     tasks.withType<JavaCompile>().configureEach {
         options.encoding = Charsets.UTF_8.name()
-        options.release = 17
+        options.release = 21
     }
     tasks.withType<Javadoc> {
         options.encoding = Charsets.UTF_8.name()
