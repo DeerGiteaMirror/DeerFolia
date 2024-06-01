@@ -5,7 +5,7 @@ Subject: [PATCH] Rebranding
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index eb2f9941b24af591f1e56339b97f5284a765cf81..98714f15efad5d871f7b991a3032420a87a79a95 100644
+index eb2f9941b24af591f1e56339b97f5284a765cf81..ddb6609ff9612f3862ea4a236c62c2d196232e49 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -13,7 +13,7 @@ configurations.named(log4jPlugins.compileClasspathConfigurationName) {
@@ -61,10 +61,10 @@ index cb60d58d4a7556dd896f31d0cd249f860bb3ef84..bad1284f624a25ec9aeb0c5ce67c4ec6
                  metrics.addCustomChart(new Metrics.DrilldownPie("java_version", () -> {
                      Map<String, Map<String, Integer>> map = new HashMap<>();
 diff --git a/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java b/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java
-index 29bd788ae8bc61c1e62a4f84b9e259931a7041ce..b8c7cc67aa89d3dee4f613f05511c04792107f8b 100644
+index 29bd788ae8bc61c1e62a4f84b9e259931a7041ce..133d9974c5db973029750a08cac50665b2e3397f 100644
 --- a/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java
 +++ b/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java
-@@ -35,22 +35,29 @@ public class PaperVersionFetcher implements VersionFetcher {
+@@ -35,25 +35,32 @@ public class PaperVersionFetcher implements VersionFetcher {
      private static final Logger LOGGER = LogUtils.getClassLogger();
      private static final int DISTANCE_ERROR = -1;
      private static final int DISTANCE_UNKNOWN = -2;
@@ -88,6 +88,7 @@ index 29bd788ae8bc61c1e62a4f84b9e259931a7041ce..b8c7cc67aa89d3dee4f613f05511c047
 -        } else {
 -            updateMessage = getUpdateStatusMessage("PaperMC/Folia", build); // Folia
 -        }
+-        final @Nullable Component history = this.getHistory();
 +        // DeerFolia start - Disable update check
 +        updateMessage = Component.text("DeerFolia current does not support update check", NamedTextColor.YELLOW);
 +        return updateMessage;
@@ -96,10 +97,14 @@ index 29bd788ae8bc61c1e62a4f84b9e259931a7041ce..b8c7cc67aa89d3dee4f613f05511c047
 +        // } else {
 +        //     updateMessage = getUpdateStatusMessage("PaperMC/Folia", build); // Folia
 +        // }
-+        // DeerFolia end - Disable update check
-         final @Nullable Component history = this.getHistory();
++        // final @Nullable Component history = this.getHistory();
  
-         return history != null ? Component.textOfChildren(updateMessage, Component.newline(), history) : updateMessage;
+-        return history != null ? Component.textOfChildren(updateMessage, Component.newline(), history) : updateMessage;
++        // return history != null ? Component.textOfChildren(updateMessage, Component.newline(), history) : updateMessage;
++        // DeerFolia end - Disable update check
+     }
+ 
+     private static Component getUpdateStatusMessage(final String repo, final ServerBuildInfo build) {
 diff --git a/src/main/java/com/destroystokyo/paper/console/PaperConsole.java b/src/main/java/com/destroystokyo/paper/console/PaperConsole.java
 index c5d5648f4ca603ef2b1df723b58f9caf4dd3c722..d5c8b196c1282eecd74ce046242700b57cfde140 100644
 --- a/src/main/java/com/destroystokyo/paper/console/PaperConsole.java
