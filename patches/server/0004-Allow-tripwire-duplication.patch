@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: zhangyuheng <zhangyuheng@lunadeer.cn>
+Date: Tue, 4 Jun 2024 09:40:57 +0800
+Subject: [PATCH] Allow tripwire duplication
+
+
+diff --git a/src/main/java/net/minecraft/world/level/block/TripWireHookBlock.java b/src/main/java/net/minecraft/world/level/block/TripWireHookBlock.java
+index 76aca266d3f3222502ff4c196228f08fcd88c5f8..2e26a14faf95cf71fad2121b40de60b275be5dfc 100644
+--- a/src/main/java/net/minecraft/world/level/block/TripWireHookBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/TripWireHookBlock.java
+@@ -202,8 +202,10 @@ public class TripWireHookBlock extends Block {
+                     BlockState iblockdata4 = aiblockdata[l];
+ 
+                     if (iblockdata4 != null) {
+-                        if (world.getBlockState(blockposition2).is(Blocks.TRIPWIRE) || io.papermc.paper.configuration.GlobalConfiguration.get().unsupportedSettings.allowTripwireDisarmingExploits) { // Paper - Fix tripwire disarming not working as intended
++                        // if (world.getBlockState(blockposition2).is(Blocks.TRIPWIRE) || io.papermc.paper.configuration.GlobalConfiguration.get().unsupportedSettings.allowTripwireDisarmingExploits) { // DeerFolia // Paper - Fix tripwire disarming not working as intended
+                         world.setBlock(blockposition2, (BlockState) iblockdata4.trySetValue(TripWireHookBlock.ATTACHED, flag4), 3);
++                        if (!world.getBlockState(blockposition2).isAir()) {
++                            ;
+                         }
+                     }
+                 }
