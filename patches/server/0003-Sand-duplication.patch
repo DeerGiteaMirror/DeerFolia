@@ -5,10 +5,10 @@ Subject: [PATCH] Sand duplication
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index d8be7c8dca41b6ad6d9a28590be9e33ef9045bdb..4045e773607227d5bf2b20072d2fea3d520548cb 100644
+index fad6a7185e8e9ea160b47ec9da56d08af9df8396..f5dc632e6a10d6f80d86f360fa18291aede757b9 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -4112,6 +4112,7 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+@@ -4117,6 +4117,7 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
  
      protected boolean tryEndPortal() {
          io.papermc.paper.util.TickThread.ensureTickThread(this, "Cannot portal entity async");
@@ -16,7 +16,7 @@ index d8be7c8dca41b6ad6d9a28590be9e33ef9045bdb..4045e773607227d5bf2b20072d2fea3d
          BlockPos pos = this.portalBlock;
          ServerLevel world = this.portalWorld;
          this.portalBlock = null;
-@@ -4197,12 +4198,17 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+@@ -4202,12 +4203,17 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
                          targetPos, 16, // load 16 blocks to be safe from block physics
                          ca.spottedleaf.concurrentutil.executor.standard.PrioritisedExecutor.Priority.HIGH,
                          (chunks) -> {
@@ -36,7 +36,7 @@ index d8be7c8dca41b6ad6d9a28590be9e33ef9045bdb..4045e773607227d5bf2b20072d2fea3d
                              );
                          }
                      );
-@@ -4390,6 +4396,12 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+@@ -4395,6 +4401,12 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
              return false;
          }
  
@@ -49,7 +49,7 @@ index d8be7c8dca41b6ad6d9a28590be9e33ef9045bdb..4045e773607227d5bf2b20072d2fea3d
          Vec3 initialPosition = this.position();
          ChunkPos initialPositionChunk = new ChunkPos(
              io.papermc.paper.util.CoordinateUtils.getChunkX(initialPosition),
-@@ -4447,7 +4459,7 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+@@ -4452,7 +4464,7 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
              // place
              passengerTree.root.placeInAsync(
                  originWorld, destination, Entity.TELEPORT_FLAG_LOAD_CHUNK | (takePassengers ? Entity.TELEPORT_FLAG_TELEPORT_PASSENGERS : 0L),
