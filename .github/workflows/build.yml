@@ -31,9 +31,7 @@ jobs:
       - name: "Apply Patches"
         run: ./gradlew applyPatches
       - name: "Build Mojmap"
-        run: |
-          ./gradlew createReobfPaperclipJar
-          ./gradlew createMojmapPaperclipJar
+        run: ./gradlew createMojmapPaperclipJar
       - name: "Copy jar to staging"
         run: mkdir staging && cp build/libs/*.jar staging
       - uses: "softprops/action-gh-release@v2"

@@ -26,9 +26,7 @@ jobs:
       - name: "Apply Patches"
         run: ./gradlew applyPatches
       - name: "Build Mojmap"
-        run: |
-          ./gradlew createReobfPaperclipJar
-          ./gradlew createMojmapPaperclipJar
+        run: ./gradlew createReobfPaperclipJar
       - name: "Copy jar to staging"
         run: mkdir staging && cp build/libs/*.jar staging
       - name: "Setup go for release script"
@@ -40,7 +38,7 @@ jobs:
       - name: "Release"
         uses: https://ssl.lunadeer.cn:14446/zhangyuheng/release-action@main
         with:
-          note: " - 建议下载 `DeerFolia-paperclip-xxx-mojmap.jar` 版本。\n - 如果有插件无法运行可尝试 `DeerFolia-paperclip-xxx-reobf.jar`。"
+          note: " - 建议下载 `DeerFolia-paperclip-xxx.jar` 前缀的版本。"
           files: |-
             staging/*.jar
           api_key: '${{secrets.RELEASE_TOKEN}}'
