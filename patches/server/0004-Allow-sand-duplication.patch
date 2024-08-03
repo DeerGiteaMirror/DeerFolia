@@ -1,0 +1,92 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: zhangyuheng <zhangyuheng@lunadeer.cn>
+Date: Sat, 3 Aug 2024 18:17:13 +0800
+Subject: [PATCH] Allow sand duplication
+
+
+diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
+index 7a102b4e90fbc09b8653e5b566299efe24a04cf6..4d5fcff9bb860542502f7d15a86cd14dc9cca5fa 100644
+--- a/src/main/java/net/minecraft/world/entity/Entity.java
++++ b/src/main/java/net/minecraft/world/entity/Entity.java
+@@ -4186,13 +4186,18 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+                         targetPos, 16, // load 16 blocks to be safe from block physics
+                         ca.spottedleaf.concurrentutil.executor.standard.PrioritisedExecutor.Priority.HIGH,
+                         (chunks) -> {
+-                            net.minecraft.world.level.levelgen.feature.EndPlatformFeature.createEndPlatform(destination, targetPos.below(), true, null);
++                            // DeerFolia start - Vanilla end teleportation
++                            // net.minecraft.world.level.levelgen.feature.EndPlatformFeature.createEndPlatform(destination, targetPos.below(), true, null);
++                            Vec3 finalPos;
++                            if (this instanceof Player) finalPos = Vec3.atBottomCenterOf(targetPos.below());
++                            else finalPos = Vec3.atBottomCenterOf(targetPos);
++                            // DeerFolia end
+ 
+                             // the portal obsidian is placed at targetPos.y - 2, so if we want to place the entity
+                             // on the obsidian, we need to spawn at targetPos.y - 1
+                             portalInfoCompletable.complete(
+                                 new net.minecraft.world.level.portal.DimensionTransition(
+-                                    destination, Vec3.atBottomCenterOf(targetPos.below()), Vec3.ZERO, 90.0f, 0.0f,
++                                        destination, finalPos, this.getDeltaMovement(), 90.0f, 0.0f,    // DeerFolia Vanilla end teleportation
+                                     DimensionTransition.PLAY_PORTAL_SOUND.then(DimensionTransition.PLACE_PORTAL_TICKET),
+                                     org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.END_PORTAL
+                                 )
+@@ -4389,6 +4394,11 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+         if (!this.canPortalAsync(destination, takePassengers)) {
+             return false;
+         }
++        // DeerFolia start - sync end platform spawning & entity teleportation
++        final java.util.function.Consumer<Entity> tpComplete = type == PortalType.END && destination.getTypeKey() == net.minecraft.world.level.dimension.LevelStem.END
++                        ? e -> net.minecraft.world.level.levelgen.feature.EndPlatformFeature.createEndPlatform(destination, ServerLevel.END_SPAWN_POINT.below(), true)
++                        : teleportComplete;
++        // DeerFolia end - sync end platform spawning & entity teleportation
+ 
+         Vec3 initialPosition = this.position();
+         ChunkPos initialPositionChunk = new ChunkPos(
+@@ -4453,9 +4463,14 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+                         info.postDimensionTransition().onTransition(teleported);
+                     }
+ 
+-                    if (teleportComplete != null) {
+-                        teleportComplete.accept(teleported);
++                    // DeerFolia start - sync end platform spawning & entity teleportation
++                    // if (teleportComplete != null) {
++                    //     teleportComplete.accept(teleported);
++                    // }
++                    if (tpComplete != null) {
++                        tpComplete.accept(teleported);
+                     }
++                    // DeerFolia end - sync end platform spawning & entity teleportation
+                 }
+             );
+         });
+diff --git a/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java b/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java
+index 5d6b1a63a2a213f8a4e81c5e574847007a82007b..6512ac412ad48196e5decc47ccbf01c759a290eb 100644
+--- a/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java
++++ b/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java
+@@ -69,7 +69,7 @@ public class FallingBlockEntity extends Entity {
+     public float fallDamagePerDistance;
+     @Nullable
+     public CompoundTag blockData;
+-    public boolean forceTickAfterTeleportToDuplicate;
++    public boolean forceTickAfterTeleportToDuplicate = true;
+     protected static final EntityDataAccessor<BlockPos> DATA_START_POS = SynchedEntityData.defineId(FallingBlockEntity.class, EntityDataSerializers.BLOCK_POS);
+     public boolean autoExpire = true; // Paper - Expand FallingBlock API
+ 
+diff --git a/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java b/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java
+index 58e15d7a5f7997a7aec9edaa5d211807b2b1ef6b..6d769f57242c2454cc19255197db70b9a9cf68ca 100644
+--- a/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java
+@@ -70,6 +70,14 @@ public class EndPortalBlock extends BaseEntityBlock implements Portal {
+             world.getCraftServer().getPluginManager().callEvent(event);
+             if (event.isCancelled()) return; // Paper - make cancellable
+             // CraftBukkit end
++
++            // DeerFolia start - Sand duplication
++            if (!(entity instanceof net.minecraft.world.entity.player.Player)) {
++                entity.endPortalLogicAsync(pos);
++                return;
++            }
++            // DeerFolia end - Sand duplication
++
+             if (!world.isClientSide && world.dimension() == Level.END && entity instanceof ServerPlayer) {
+                 ServerPlayer entityplayer = (ServerPlayer) entity;
+ 
