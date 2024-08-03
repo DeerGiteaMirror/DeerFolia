@@ -18,7 +18,7 @@ DeerFolia 是一个基于 [Folia](https://papermc.io/software/folia) 的 Minecra
 
 ## 此分支特性
 
-- ~~还原了 [虚空交易](https://ssl.lunadeer.cn:14446/zhangyuheng/DeerFolia/src/branch/master/patches/server/0002-Allow-void-trading.patch)~~（疑似已被Mojiang官方修复）；
+- ~~还原了 [虚空交易](https://ssl.lunadeer.cn:14446/zhangyuheng/DeerFolia/src/branch/master/patches/server/0002-Allow-void-trading.patch)~~（疑似已被 mojang 官方修复）；
 - 还原了 [刷沙机制](https://ssl.lunadeer.cn:14446/zhangyuheng/DeerFolia/src/branch/master/patches/server/0003-Sand-duplication.patch)（虽然Paper已支持刷沙，但由于folia的特性，paper的刷沙开关是无效的）；
 - 还原了 [刷线机制](https://ssl.lunadeer.cn:14446/zhangyuheng/DeerFolia/src/branch/master/patches/server/0004-Allow-tripwire-duplication.patch)（Paper已支持刷线，此分支补丁为强制开启此特性）；
 
