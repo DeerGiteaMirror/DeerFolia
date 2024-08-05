@@ -30,11 +30,11 @@ jobs:
       - name: "Build Mojmap"
         run: ./gradlew createMojmapPaperclipJar
       - name: "Copy jar to staging"
-        run: mkdir staging && cp build/libs/*.jar staging
+        run: mkdir staging && cp build/libs/DeerFolia-paperclip-*.jar staging/
       - name: "Rename file to DeerFolia-{git tag name}.jar"
         run: |
-            GIT_TAG=$(git describe --tags --abbrev=0)
-            mv staging/*.jar staging/DeerFolia-$GIT_TAG.jar
+          GIT_TAG=$(git describe --tags --abbrev=0)
+          mv staging/*.jar staging/DeerFolia-$GIT_TAG.jar
       - name: "Setup go for release script"
         run: |
           wget --no-check-certificate https://studygolang.com/dl/golang/go1.22.0.linux-amd64.tar.gz
