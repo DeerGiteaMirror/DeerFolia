@@ -23,6 +23,8 @@ jobs:
         run: |
           git config --global user.email "actions@gitea.com"
           git config --global user.name "actions"
+          echo "proxy is ${{ vars.DEERCLOUD_PROXY }}"
+          export https_proxy=${{ vars.DEERCLOUD_PROXY }}
       - name: "Apply Patches"
         run: ./gradlew applyPatches
       - name: "Build Mojmap"
