@@ -73,17 +73,12 @@ index b1c07e582dbf0a203cf734fdbcd8387a422af3a6..44d0d1bae314fba86d2d8ba36241bc77
  
          static void updateCurrentRegion() {
 diff --git a/src/main/java/io/papermc/paper/threadedregions/commands/CommandServerHealth.java b/src/main/java/io/papermc/paper/threadedregions/commands/CommandServerHealth.java
-index 012d3a7da7fe483393a0888c823bd2e78f5c3908..97c2ed59c361e5efcb3baa62081944d35f5253c1 100644
+index 012d3a7da7fe483393a0888c823bd2e78f5c3908..6a06726c28695c0e639f0517274078d3c673fbcf 100644
 --- a/src/main/java/io/papermc/paper/threadedregions/commands/CommandServerHealth.java
 +++ b/src/main/java/io/papermc/paper/threadedregions/commands/CommandServerHealth.java
-@@ -71,9 +71,13 @@ public final class CommandServerHealth extends Command {
-     private static Component formatRegionStats(final TickRegions.RegionStats stats, final boolean newline) {
-         return Component.text()
+@@ -73,7 +73,9 @@ public final class CommandServerHealth extends Command {
              .append(Component.text("Chunks: ", PRIMARY))
--            .append(Component.text(NO_DECIMAL_PLACES.get().format((long)stats.getChunkCount()), INFORMATION))
-+            .append(Component.text(NO_DECIMAL_PLACES.get().format((long)stats.getChunkCount()), INFORMATION)
-+                    .hoverEvent(HoverEvent.showText(Component.text("Chunks: " + stats.getTickingChunks(), SECONDARY)))
-+            )
+             .append(Component.text(NO_DECIMAL_PLACES.get().format((long)stats.getChunkCount()), INFORMATION))
              .append(Component.text(" Players: ", PRIMARY))
 -            .append(Component.text(NO_DECIMAL_PLACES.get().format((long)stats.getPlayerCount()), INFORMATION))
 +            .append(Component.text(NO_DECIMAL_PLACES.get().format((long)stats.getPlayerCount()), INFORMATION)
@@ -92,7 +87,7 @@ index 012d3a7da7fe483393a0888c823bd2e78f5c3908..97c2ed59c361e5efcb3baa62081944d3
              .append(Component.text(" Entities: ", PRIMARY))
              .append(Component.text(NO_DECIMAL_PLACES.get().format((long)stats.getEntityCount()) + (newline ? "\n" : ""), INFORMATION))
              .build();
-@@ -247,7 +251,10 @@ public final class CommandServerHealth extends Command {
+@@ -247,7 +249,10 @@ public final class CommandServerHealth extends Command {
              final Component line = Component.text()
                  .append(Component.text(" - ", LIST, TextDecoration.BOLD))
                  .append(Component.text("Region around block ", PRIMARY))
@@ -104,7 +99,7 @@ index 012d3a7da7fe483393a0888c823bd2e78f5c3908..97c2ed59c361e5efcb3baa62081944d3
                  .append(Component.text(":\n", PRIMARY))
  
                  .append(Component.text("    ", PRIMARY))
-@@ -260,10 +267,7 @@ public final class CommandServerHealth extends Command {
+@@ -260,10 +265,7 @@ public final class CommandServerHealth extends Command {
  
                  .append(Component.text("    ", PRIMARY))
                  .append(formatRegionStats(region.getData().getRegionStats(), (i + 1) != len))
