@@ -1,0 +1,41 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: zhangyuheng <zhangyuheng@lunadeer.cn>
+Date: Thu, 8 Aug 2024 15:51:22 +0800
+Subject: [PATCH] Limit mob pathfinding update
+
+
+diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
+index 741ba5f0834ab5f0b0ffdeb91a9ff8cfaf922792..0141caf62b0e06676696c01a1956d4cf3564a4a4 100644
+--- a/src/main/java/net/minecraft/world/entity/Mob.java
++++ b/src/main/java/net/minecraft/world/entity/Mob.java
+@@ -924,6 +924,8 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+         }
+     }
+ 
++    private int lastPathfindingTick = 0; // DeerFolia - limit pathfinding updates
++
+     @Override
+     protected final void serverAiStep() {
+         ++this.noActionTime;
+@@ -943,6 +945,10 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+         gameprofilerfiller.pop();
+         int i = this.tickCount + this.getId();
+ 
++        // DeerFolia start - limit pathfinding updates
++        int pathfindingTickLimit = 20;  // todo - make this configurable maybe?
++        if (this.tickCount > this.lastPathfindingTick + pathfindingTickLimit) {
++        // DeerFolia end
+         if (i % 2 != 0 && this.tickCount > 1) {
+             gameprofilerfiller.push("targetSelector");
+             this.targetSelector.tickRunningGoals(false);
+@@ -958,6 +964,10 @@ public abstract class Mob extends LivingEntity implements EquipmentUser, Leashab
+             this.goalSelector.tick();
+             gameprofilerfiller.pop();
+         }
++        // DeerFolia - limit pathfinding updates
++        this.lastPathfindingTick = this.tickCount;
++        }
++        // DeerFolia end
+ 
+         gameprofilerfiller.push("navigation");
+         this.navigation.tick();

@@ -20,6 +20,7 @@ val paperMavenPublicUrl = "https://repo.papermc.io/repository/maven-public/"
 
 repositories {
     mavenCentral()
+    mavenLocal()
     maven(paperMavenPublicUrl) {
         content {
             onlyForConfigurations(configurations.paperclip.name)
