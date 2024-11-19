@@ -5,7 +5,7 @@ Subject: [PATCH] Rebranding
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index f0a90d13a17160cd363d54d494add4f6433b4758..e4c5df72efcdd81ffe7dd0344f7f1c20ae62acc1 100644
+index c2f2ba1df68e9823c56287f1bea23fb6d6a781a2..9b7e53036ffd5f2dc2c581e3b657644b25327b5a 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -13,7 +13,7 @@ configurations.named(log4jPlugins.compileClasspathConfigurationName) {
@@ -17,7 +17,7 @@ index f0a90d13a17160cd363d54d494add4f6433b4758..e4c5df72efcdd81ffe7dd0344f7f1c20
      // Paper start
      implementation("org.jline:jline-terminal-jansi:3.21.0")
      implementation("net.minecrell:terminalconsoleappender:1.3.0")
-@@ -84,14 +84,14 @@ tasks.jar {
+@@ -85,14 +85,14 @@ tasks.jar {
          val gitBranch = git("rev-parse", "--abbrev-ref", "HEAD").getText().trim() // Paper
          attributes(
              "Main-Class" to "org.bukkit.craftbukkit.Main",
@@ -106,10 +106,10 @@ index 29bd788ae8bc61c1e62a4f84b9e259931a7041ce..133d9974c5db973029750a08cac50665
  
      private static Component getUpdateStatusMessage(final String repo, final ServerBuildInfo build) {
 diff --git a/src/main/java/com/destroystokyo/paper/console/PaperConsole.java b/src/main/java/com/destroystokyo/paper/console/PaperConsole.java
-index c5d5648f4ca603ef2b1df723b58f9caf4dd3c722..d5c8b196c1282eecd74ce046242700b57cfde140 100644
+index 6ee39b534b8d992655bc0cef3c299d12cbae0034..8fd162b6441ca1a6ee779d898ee854dc5b1343c5 100644
 --- a/src/main/java/com/destroystokyo/paper/console/PaperConsole.java
 +++ b/src/main/java/com/destroystokyo/paper/console/PaperConsole.java
-@@ -17,7 +17,7 @@ public final class PaperConsole extends SimpleTerminalConsole {
+@@ -20,7 +20,7 @@ public final class PaperConsole extends SimpleTerminalConsole {
      @Override
      protected LineReader buildReader(LineReaderBuilder builder) {
          builder
@@ -205,7 +205,7 @@ index e9b6ca3aa25e140467ae866d572483050ea3fa0e..4b84eb8ceb719bb6b4dc281b32c5b67b
  
          if (stream != null) {
 diff --git a/src/main/java/org/spigotmc/WatchdogThread.java b/src/main/java/org/spigotmc/WatchdogThread.java
-index f7a4fee9bb25ff256dc2e5ea26bfbceca6a49167..e071112059905fc1898fd3435dce49ff7f8ff244 100644
+index 64e0acf28fc241b16a7bc8d3807062fd7758ed7f..3eb75a0fbe82e6f5efc774149e3f965cc5b6b250 100644
 --- a/src/main/java/org/spigotmc/WatchdogThread.java
 +++ b/src/main/java/org/spigotmc/WatchdogThread.java
 @@ -96,7 +96,7 @@ public class WatchdogThread extends ca.spottedleaf.moonrise.common.util.TickThre
