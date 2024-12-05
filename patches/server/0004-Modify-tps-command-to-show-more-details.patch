@@ -5,7 +5,7 @@ Subject: [PATCH] Modify tps command to show more details
 
 
 diff --git a/src/main/java/io/papermc/paper/threadedregions/TickRegions.java b/src/main/java/io/papermc/paper/threadedregions/TickRegions.java
-index b1c07e582dbf0a203cf734fdbcd8387a422af3a6..44d0d1bae314fba86d2d8ba36241bc77a9c2b21f 100644
+index 988fe74578065c9464f5639e5cc6af79619edef5..cc09bfad668f9a4f5de7fe20cd6b363f60a8a72d 100644
 --- a/src/main/java/io/papermc/paper/threadedregions/TickRegions.java
 +++ b/src/main/java/io/papermc/paper/threadedregions/TickRegions.java
 @@ -2,6 +2,7 @@ package io.papermc.paper.threadedregions;

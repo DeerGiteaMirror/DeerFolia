@@ -5,12 +5,12 @@ Subject: [PATCH] Allow sand duplication
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 2ccc358daae43dcebf03db64526f17fbd9df23f8..7356ecda5b9b416ac23e65193462ae4355b4386d 100644
+index 451d4cf162e39acd7ed215f82a5a84f6be6e166a..331c7d9b3f1a53bd7de6df6f9b6d4bc99f641852 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -4188,13 +4188,18 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+@@ -4394,13 +4394,18 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
                          targetPos, 16, // load 16 blocks to be safe from block physics
-                         ca.spottedleaf.concurrentutil.executor.standard.PrioritisedExecutor.Priority.HIGH,
+                         ca.spottedleaf.concurrentutil.util.Priority.HIGH,
                          (chunks) -> {
 -                            net.minecraft.world.level.levelgen.feature.EndPlatformFeature.createEndPlatform(destination, targetPos.below(), true, null);
 +                            // DeerFolia start - Vanilla end teleportation
@@ -23,13 +23,13 @@ index 2ccc358daae43dcebf03db64526f17fbd9df23f8..7356ecda5b9b416ac23e65193462ae43
                              // the portal obsidian is placed at targetPos.y - 2, so if we want to place the entity
                              // on the obsidian, we need to spawn at targetPos.y - 1
                              portalInfoCompletable.complete(
-                                 new net.minecraft.world.level.portal.DimensionTransition(
+                                 new net.minecraft.world.level.portal.TeleportTransition(
 -                                    destination, Vec3.atBottomCenterOf(targetPos.below()), Vec3.ZERO, 90.0f, 0.0f,
-+                                        destination, finalPos, this.getDeltaMovement(), 90.0f, 0.0f,    // DeerFolia Vanilla end teleportation
-                                     DimensionTransition.PLAY_PORTAL_SOUND.then(DimensionTransition.PLACE_PORTAL_TICKET),
++                                    destination, finalPos, this.getDeltaMovement(), 90.0f, 0.0f,    // DeerFolia Vanilla end teleportation
+                                     TeleportTransition.PLAY_PORTAL_SOUND.then(TeleportTransition.PLACE_PORTAL_TICKET),
                                      org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.END_PORTAL
                                  )
-@@ -4391,6 +4396,11 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+@@ -4596,6 +4601,11 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
          if (!this.canPortalAsync(destination, takePassengers)) {
              return false;
          }
@@ -41,8 +41,8 @@ index 2ccc358daae43dcebf03db64526f17fbd9df23f8..7356ecda5b9b416ac23e65193462ae43
  
          Vec3 initialPosition = this.position();
          ChunkPos initialPositionChunk = new ChunkPos(
-@@ -4455,9 +4465,14 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
-                         info.postDimensionTransition().onTransition(teleported);
+@@ -4660,9 +4670,14 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+                         info.postTeleportTransition().onTransition(teleported);
                      }
  
 -                    if (teleportComplete != null) {
@@ -59,7 +59,7 @@ index 2ccc358daae43dcebf03db64526f17fbd9df23f8..7356ecda5b9b416ac23e65193462ae43
              );
          });
 diff --git a/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java b/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java
-index 5d6b1a63a2a213f8a4e81c5e574847007a82007b..6512ac412ad48196e5decc47ccbf01c759a290eb 100644
+index 8203bc134888a57056a6cb301beb9ff21983716f..b7e24e005246e21995e8467e187f4179ebcaa3bc 100644
 --- a/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/item/FallingBlockEntity.java
 @@ -69,7 +69,7 @@ public class FallingBlockEntity extends Entity {

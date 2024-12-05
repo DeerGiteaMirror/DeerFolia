@@ -5,19 +5,19 @@ Subject: [PATCH] Rebranding
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index c2f2ba1df68e9823c56287f1bea23fb6d6a781a2..9b7e53036ffd5f2dc2c581e3b657644b25327b5a 100644
+index 142714c7d47eb5de937ad385c81968148a7e4828..dc6be0b860e62df8adcbd954f2879c00e86c3b6c 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
-@@ -13,7 +13,7 @@ configurations.named(log4jPlugins.compileClasspathConfigurationName) {
- val alsoShade: Configuration by configurations.creating
+@@ -25,7 +25,7 @@ abstract class MockitoAgentProvider : CommandLineArgumentProvider {
+ // Paper end - configure mockito agent that is needed in newer java versions
  
  dependencies {
 -    implementation(project(":folia-api")) // Folia
-+    implementation(project(":deer-folia-api")) // Folia
++    implementation(project(":deer-folia-api")) // Folia // DeerFolia
      // Paper start
-     implementation("org.jline:jline-terminal-jansi:3.21.0")
-     implementation("net.minecrell:terminalconsoleappender:1.3.0")
-@@ -85,14 +85,14 @@ tasks.jar {
+     implementation("org.jline:jline-terminal-ffm:3.27.1") // use ffm on java 22+
+     implementation("org.jline:jline-terminal-jni:3.27.1") // fall back to jni on java 21
+@@ -99,14 +99,14 @@ tasks.jar {
          val gitBranch = git("rev-parse", "--abbrev-ref", "HEAD").getText().trim() // Paper
          attributes(
              "Main-Class" to "org.bukkit.craftbukkit.Main",
@@ -166,10 +166,10 @@ index b24265573fdef5d9a964bcd76146f34542c420cf..806fffca351879e327fd642e364b8828
  
      public SystemReport getSystemReport() {
 diff --git a/src/main/java/net/minecraft/world/level/chunk/storage/RegionFileStorage.java b/src/main/java/net/minecraft/world/level/chunk/storage/RegionFileStorage.java
-index 40689256711cc94a806ca1da346f4f62eda31526..e88da47c58204d650a75f90816a68b1588332b87 100644
+index e40665cead218502b44dd49051a53326ed94f061..cf0eb91b9fd76e6d21544042973f69a9b5810e0b 100644
 --- a/src/main/java/net/minecraft/world/level/chunk/storage/RegionFileStorage.java
 +++ b/src/main/java/net/minecraft/world/level/chunk/storage/RegionFileStorage.java
-@@ -177,7 +177,7 @@ public class RegionFileStorage implements AutoCloseable, ca.spottedleaf.moonrise
+@@ -289,7 +289,7 @@ public class RegionFileStorage implements AutoCloseable, ca.spottedleaf.moonrise
  
      // Paper start
      private static void printOversizedLog(String msg, Path file, int x, int z) {
@@ -179,13 +179,13 @@ index 40689256711cc94a806ca1da346f4f62eda31526..e88da47c58204d650a75f90816a68b15
  
      private static CompoundTag readOversizedChunk(RegionFile regionfile, ChunkPos chunkCoordinate) throws IOException {
 diff --git a/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java b/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java
-index 5a24902b735cbd64dd5cd5ad46b096c4bdfa799f..6c7bc7e2c76eb5d96a8ab04f7c91ea9dcc8017ed 100644
+index 3a5d9fb6ceba1944b74bf6d5b2949a199af1b985..c61548d79c39cdfde24f43463d26857166d09ccf 100644
 --- a/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java
 +++ b/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java
-@@ -492,7 +492,7 @@ public class CraftScheduler implements BukkitScheduler {
+@@ -491,7 +491,7 @@ public class CraftScheduler implements BukkitScheduler {
                  this.parsePending();
              } else {
-                 // this.debugTail = this.debugTail.setNext(new CraftAsyncDebugger(currentTick + CraftScheduler.RECENT_TICKS, task.getOwner(), task.getTaskClass())); // Paper
+                 // this.debugTail = this.debugTail.setNext(new CraftAsyncDebugger(this.currentTick + CraftScheduler.RECENT_TICKS, task.getOwner(), task.getTaskClass())); // Paper
 -                task.getOwner().getLogger().log(Level.SEVERE, "Unexpected Async Task in the Sync Scheduler. Report this to Paper"); // Paper
 +                task.getOwner().getLogger().log(Level.SEVERE, "Unexpected Async Task in the Sync Scheduler. Report this to DeerFolia"); // Paper // DeerFolia
                  // We don't need to parse pending
