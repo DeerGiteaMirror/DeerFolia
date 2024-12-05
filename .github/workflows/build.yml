@@ -33,7 +33,11 @@ jobs:
       - name: "Build Mojmap"
         run: ./gradlew createMojmapPaperclipJar
       - name: "Copy jar to staging"
-        run: mkdir staging && cp build/libs/*.jar staging
+        run: mkdir staging && cp build/libs/DeerFolia-paperclip-*-mojmap.jar staging/
+      - name: "Rename file to DeerFolia-{git tag name}.jar"
+        run: |
+          GIT_TAG=$(git describe --tags --abbrev=0)
+          mv staging/*.jar staging/DeerFolia-$GIT_TAG.jar
       - uses: "softprops/action-gh-release@v2"
         if: startsWith(github.ref, 'refs/tags/')
         with:
