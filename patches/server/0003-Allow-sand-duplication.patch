@@ -71,3 +71,20 @@ index 8203bc134888a57056a6cb301beb9ff21983716f..b7e24e005246e21995e8467e187f4179
      protected static final EntityDataAccessor<BlockPos> DATA_START_POS = SynchedEntityData.defineId(FallingBlockEntity.class, EntityDataSerializers.BLOCK_POS);
      public boolean autoExpire = true; // Paper - Expand FallingBlock API
  
+diff --git a/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java b/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java
+index 403cced72fa043a9084afb5bb8fa037ccb511d41..b9c4288549d7da0aea136d20dfeda0adfb3b5e5f 100644
+--- a/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/EndPortalBlock.java
+@@ -77,6 +77,12 @@ public class EndPortalBlock extends BaseEntityBlock implements Portal {
+             // CraftBukkit end
+             // Folia - region threading - do not show credits
+ 
++            // DeerFolia start - unsafe teleportation
++            if (!(entity instanceof net.minecraft.world.entity.player.Player)) {
++                 entity.endPortalLogicAsync(pos);
++            }
++            // DeerFolia end
++
+             entity.setAsInsidePortal(this, pos);
+         }
+ 
