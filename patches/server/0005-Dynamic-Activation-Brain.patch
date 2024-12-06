@@ -106,6 +106,23 @@ index bd2d62f73e4f1fa1e655012d04e104acca5db198..ac52c70c0cb88bb6428e136cf6911844
              this.goalSelector.tick();
              gameprofilerfiller.pop();
          }
+diff --git a/src/main/java/net/minecraft/world/entity/ai/behavior/VillagerPanicTrigger.java b/src/main/java/net/minecraft/world/entity/ai/behavior/VillagerPanicTrigger.java
+index 758f62416ca9c02351348ac0d41deeb4624abc0e..65139a44567bc50cffaf04a0416ce6b4d61219f7 100644
+--- a/src/main/java/net/minecraft/world/entity/ai/behavior/VillagerPanicTrigger.java
++++ b/src/main/java/net/minecraft/world/entity/ai/behavior/VillagerPanicTrigger.java
+@@ -36,7 +36,11 @@ public class VillagerPanicTrigger extends Behavior<Villager> {
+ 
+     @Override
+     protected void tick(ServerLevel world, Villager entity, long time) {
+-        if (time % 100L == 0L) {
++        // DeerFolia start - puffish DAB
++        if (entity.nextGolemPanic < 0) entity.nextGolemPanic = time + 100;
++        if (--entity.nextGolemPanic < time) {
++            entity.nextGolemPanic = -1;
++            // DeerFolia end - puffish DAB
+             entity.spawnGolemIfNeeded(world, time, 3);
+         }
+     }
 diff --git a/src/main/java/net/minecraft/world/entity/ai/goal/GoalSelector.java b/src/main/java/net/minecraft/world/entity/ai/goal/GoalSelector.java
 index 29ae74339a4831ccef3d01e8054931715ba192ad..802ae2e01c3e26d86cebf279bdb847c46e422b6c 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/goal/GoalSelector.java
@@ -280,10 +297,19 @@ index 6180019da58b19d2595da508aed3196af922d587..91b7938428e6679a9154b23958a030d9
          gameprofilerfiller.pop();
          super.customServerAiStep(world);
 diff --git a/src/main/java/net/minecraft/world/entity/npc/Villager.java b/src/main/java/net/minecraft/world/entity/npc/Villager.java
-index d33dc470850acdc0cecfbad7f7990a9deb57edaf..74334c089477aca5c4757c300ea31d45d6a4f5b6 100644
+index d33dc470850acdc0cecfbad7f7990a9deb57edaf..d8a29fe8baf5e81cb35c26f4cef6004ca137b858 100644
 --- a/src/main/java/net/minecraft/world/entity/npc/Villager.java
 +++ b/src/main/java/net/minecraft/world/entity/npc/Villager.java
-@@ -245,6 +245,7 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+@@ -142,6 +142,8 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+         return holder.is(PoiTypes.MEETING);
+     });
+ 
++    public long nextGolemPanic = -1; // DeerFolia - puffish DAB
++
+     public Villager(EntityType<? extends Villager> entityType, Level world) {
+         this(entityType, world, VillagerType.PLAINS);
+     }
+@@ -245,6 +247,7 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
      }
      // Spigot End
  
@@ -291,7 +317,7 @@ index d33dc470850acdc0cecfbad7f7990a9deb57edaf..74334c089477aca5c4757c300ea31d45
      @Override
      protected void customServerAiStep(ServerLevel world) {
          // Paper start - EAR 2
-@@ -255,7 +256,12 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
+@@ -255,7 +258,12 @@ public class Villager extends AbstractVillager implements ReputationEventHandler
          ProfilerFiller gameprofilerfiller = Profiler.get();
  
          gameprofilerfiller.push("villagerBrain");
