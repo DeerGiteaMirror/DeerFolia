@@ -5,7 +5,7 @@ Subject: [PATCH] Rebranding
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 142714c7d47eb5de937ad385c81968148a7e4828..dc6be0b860e62df8adcbd954f2879c00e86c3b6c 100644
+index 8d2b5fec6fe27dca3ce01ba1ce50506179fc3b4d..d6d09ba35cd286831d2069885376f0a7c7c5730a 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -25,7 +25,7 @@ abstract class MockitoAgentProvider : CommandLineArgumentProvider {
@@ -14,10 +14,10 @@ index 142714c7d47eb5de937ad385c81968148a7e4828..dc6be0b860e62df8adcbd954f2879c00
  dependencies {
 -    implementation(project(":folia-api")) // Folia
 +    implementation(project(":deer-folia-api")) // Folia // DeerFolia
+     implementation("ca.spottedleaf:concurrentutil:0.0.2") // Paper - Add ConcurrentUtil dependency
      // Paper start
      implementation("org.jline:jline-terminal-ffm:3.27.1") // use ffm on java 22+
-     implementation("org.jline:jline-terminal-jni:3.27.1") // fall back to jni on java 21
-@@ -99,14 +99,14 @@ tasks.jar {
+@@ -100,14 +100,14 @@ tasks.jar {
          val gitBranch = git("rev-parse", "--abbrev-ref", "HEAD").getText().trim() // Paper
          attributes(
              "Main-Class" to "org.bukkit.craftbukkit.Main",
@@ -37,10 +37,10 @@ index 142714c7d47eb5de937ad385c81968148a7e4828..dc6be0b860e62df8adcbd954f2879c00
              "Build-Time" to Instant.now().toString(),
              "Git-Branch" to gitBranch, // Paper
 diff --git a/src/main/java/com/destroystokyo/paper/Metrics.java b/src/main/java/com/destroystokyo/paper/Metrics.java
-index cb60d58d4a7556dd896f31d0cd249f860bb3ef84..bad1284f624a25ec9aeb0c5ce67c4ec6fecdd031 100644
+index f5ff71e31516327be71924926938f1c9f0e503df..1baf3f278e393ead60caf062a718f621e289046d 100644
 --- a/src/main/java/com/destroystokyo/paper/Metrics.java
 +++ b/src/main/java/com/destroystokyo/paper/Metrics.java
-@@ -593,7 +593,7 @@ public class Metrics {
+@@ -592,7 +592,7 @@ public class Metrics {
              boolean logFailedRequests = config.getBoolean("logFailedRequests", false);
              // Only start Metrics, if it's enabled in the config
              if (config.getBoolean("enabled", true)) {
@@ -49,7 +49,7 @@ index cb60d58d4a7556dd896f31d0cd249f860bb3ef84..bad1284f624a25ec9aeb0c5ce67c4ec6
  
                  metrics.addCustomChart(new Metrics.SimplePie("minecraft_version", () -> {
                      String minecraftVersion = Bukkit.getVersion();
-@@ -612,6 +612,10 @@ public class Metrics {
+@@ -611,6 +611,10 @@ public class Metrics {
                      paperVersion = "unknown";
                  }
                  metrics.addCustomChart(new Metrics.SimplePie("folia_version", () -> paperVersion)); // Folia - we have our own bstats page
@@ -179,7 +179,7 @@ index e40665cead218502b44dd49051a53326ed94f061..cf0eb91b9fd76e6d21544042973f69a9
  
      private static CompoundTag readOversizedChunk(RegionFile regionfile, ChunkPos chunkCoordinate) throws IOException {
 diff --git a/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java b/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java
-index 3a5d9fb6ceba1944b74bf6d5b2949a199af1b985..c61548d79c39cdfde24f43463d26857166d09ccf 100644
+index fad85bea8643a3a88ec5c4194de7a5060e81c136..03858588a5da20ecd5bb824c39f4cea68c25ae4c 100644
 --- a/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java
 +++ b/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java
 @@ -491,7 +491,7 @@ public class CraftScheduler implements BukkitScheduler {
