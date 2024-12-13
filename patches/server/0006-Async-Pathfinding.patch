@@ -308,16 +308,17 @@ index 0000000000000000000000000000000000000000..730e12f8644ab2daa8c92df7e6241737
 \ No newline at end of file
 diff --git a/src/main/java/cn/lunadeer/async/path/AsyncPathProcessor.java b/src/main/java/cn/lunadeer/async/path/AsyncPathProcessor.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..95d0cc61bc04cdb8af593e8b637745c5e4d433ab
+index 0000000000000000000000000000000000000000..a4d965ddf1ab51f86d016c8368ffb51985afb420
 --- /dev/null
 +++ b/src/main/java/cn/lunadeer/async/path/AsyncPathProcessor.java
-@@ -0,0 +1,52 @@
+@@ -0,0 +1,53 @@
 +package cn.lunadeer.async.path;
 +
 +import com.google.common.util.concurrent.ThreadFactoryBuilder;
 +
 +import io.papermc.paper.configuration.GlobalConfiguration;
 +import net.minecraft.server.MinecraftServer;
++import net.minecraft.world.entity.Entity;
 +import net.minecraft.world.level.pathfinder.Path;
 +
 +import org.jetbrains.annotations.NotNull;
@@ -357,7 +358,7 @@ index 0000000000000000000000000000000000000000..95d0cc61bc04cdb8af593e8b637745c5
 +    public static void awaitProcessing(@Nullable Path path, Consumer<@Nullable Path> afterProcessing) {
 +        if (path != null && !path.isProcessed() && path instanceof AsyncPath asyncPath) {
 +            asyncPath.postProcessing(() ->
-+                    MinecraftServer.getServer().scheduleOnMain(() -> afterProcessing.accept(path))
++                    afterProcessing.accept(path)
 +            );
 +        } else {
 +            afterProcessing.accept(path);
@@ -586,7 +587,7 @@ index 0d177e828c2b338ce93c58aaef04df326e1eb0b2..2c5fe8059c6d8aa7d3c04eb62bb7b573
                                  }
                              }
 diff --git a/src/main/java/net/minecraft/world/entity/ai/behavior/MoveToTargetSink.java b/src/main/java/net/minecraft/world/entity/ai/behavior/MoveToTargetSink.java
-index 2a7a26ca447cc78f24e61a2bf557411c31eb16b2..809d8063373638777efc01f1019d79b53aaa0e01 100644
+index 2a7a26ca447cc78f24e61a2bf557411c31eb16b2..80b23a9b5c78a4ed61d137b9fb954a099ecb4468 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/behavior/MoveToTargetSink.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/behavior/MoveToTargetSink.java
 @@ -21,6 +21,7 @@ public class MoveToTargetSink extends Behavior<Mob> {
@@ -711,7 +712,7 @@ index 2a7a26ca447cc78f24e61a2bf557411c31eb16b2..809d8063373638777efc01f1019d79b5
      private boolean tryComputePath(Mob entity, WalkTarget walkTarget, long time) {
          BlockPos blockPos = walkTarget.getTarget().currentBlockPosition();
 diff --git a/src/main/java/net/minecraft/world/entity/ai/behavior/SetClosestHomeAsWalkTarget.java b/src/main/java/net/minecraft/world/entity/ai/behavior/SetClosestHomeAsWalkTarget.java
-index 6802e0c4d331c7125114dd86409f6a110465ab82..601f43615cb55142125e21411f651318ee760e9f 100644
+index 6802e0c4d331c7125114dd86409f6a110465ab82..18c300867fb15ae80028ead28d0abc6d197aeb26 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/behavior/SetClosestHomeAsWalkTarget.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/behavior/SetClosestHomeAsWalkTarget.java
 @@ -60,6 +60,26 @@ public class SetClosestHomeAsWalkTarget {
@@ -750,7 +751,7 @@ index 6802e0c4d331c7125114dd86409f6a110465ab82..601f43615cb55142125e21411f651318
                                          return true;
                                      } else {
 diff --git a/src/main/java/net/minecraft/world/entity/ai/goal/DoorInteractGoal.java b/src/main/java/net/minecraft/world/entity/ai/goal/DoorInteractGoal.java
-index 2846790fcd00788cf0284c348161ee1aee415f13..dc61264f901477b604099e691b7a11d9eb6aaa22 100644
+index 2846790fcd00788cf0284c348161ee1aee415f13..df80fcce17aa8f8bcab0cd84ebc18e6e78440e1d 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/goal/DoorInteractGoal.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/goal/DoorInteractGoal.java
 @@ -56,7 +56,7 @@ public abstract class DoorInteractGoal extends Goal {
@@ -763,7 +764,7 @@ index 2846790fcd00788cf0284c348161ee1aee415f13..dc61264f901477b604099e691b7a11d9
                      Node node = path.getNode(i);
                      this.doorPos = new BlockPos(node.x, node.y + 1, node.z);
 diff --git a/src/main/java/net/minecraft/world/entity/ai/navigation/AmphibiousPathNavigation.java b/src/main/java/net/minecraft/world/entity/ai/navigation/AmphibiousPathNavigation.java
-index 29b852c3262c9cd0d2c77a93c01a386a2c184742..8e0156ab5b5ad6a9351ae203b238671c86129df0 100644
+index 29b852c3262c9cd0d2c77a93c01a386a2c184742..c8d3442de4bb0ba1ff2bf8992860d884d28700b6 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/navigation/AmphibiousPathNavigation.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/navigation/AmphibiousPathNavigation.java
 @@ -12,9 +12,25 @@ public class AmphibiousPathNavigation extends PathNavigation {
@@ -943,7 +944,7 @@ index 71885b8b3f491fbe644efef02aebdd8b9f03a10b..ab30fd2d09a1265c291e3d83091aa403
              Vec3 vec3 = new Vec3(((double)node.x + this.mob.getX()) / 2.0, ((double)node.y + this.mob.getY()) / 2.0, ((double)node.z + this.mob.getZ()) / 2.0);
              return pos.closerToCenterThan(vec3, (double)(this.path.getNodeCount() - this.path.getNextNodeIndex()));
 diff --git a/src/main/java/net/minecraft/world/entity/ai/navigation/WaterBoundPathNavigation.java b/src/main/java/net/minecraft/world/entity/ai/navigation/WaterBoundPathNavigation.java
-index 943c9944ae17fa7cd72e437cce61beaf3fc9505e..b7780f0d642e870376eca6085e5e79240c86972b 100644
+index 943c9944ae17fa7cd72e437cce61beaf3fc9505e..32df610ac69d5dcf4216feffdeef20968a9c6e50 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/navigation/WaterBoundPathNavigation.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/navigation/WaterBoundPathNavigation.java
 @@ -15,11 +15,27 @@ public class WaterBoundPathNavigation extends PathNavigation {
@@ -1013,7 +1014,7 @@ index 92731b6b593289e9f583c9b705b219e81fcd8e73..5237cd25bd00f03381373564385010eb
      }
  }
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Bee.java b/src/main/java/net/minecraft/world/entity/animal/Bee.java
-index 63ee0cd25cf595196ad67d90737daf7826925b2a..edbbe175e51d80e1f62fe2b74ecf54ffbaf09914 100644
+index 63ee0cd25cf595196ad67d90737daf7826925b2a..94062c9734794366dd535427a8cf575bf04d73c9 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Bee.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Bee.java
 @@ -1170,7 +1170,7 @@ public class Bee extends Animal implements NeutralMob, FlyingAnimal {
@@ -1035,7 +1036,7 @@ index 63ee0cd25cf595196ad67d90737daf7826925b2a..edbbe175e51d80e1f62fe2b74ecf54ff
          }
      }
 diff --git a/src/main/java/net/minecraft/world/entity/animal/frog/Frog.java b/src/main/java/net/minecraft/world/entity/animal/frog/Frog.java
-index f16a6f29813365cb530b2b4ef3471ebd20aa5e1c..398fcd42e519302e583eaa90885c99e63e5080d1 100644
+index f16a6f29813365cb530b2b4ef3471ebd20aa5e1c..a29f73768d470116e99a2ee6acc556ca856d89f6 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/frog/Frog.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/frog/Frog.java
 @@ -428,6 +428,17 @@ public class Frog extends Animal implements VariantHolder<Holder<FrogVariant>> {
@@ -1069,7 +1070,7 @@ index f16a6f29813365cb530b2b4ef3471ebd20aa5e1c..398fcd42e519302e583eaa90885c99e6
          }
      }
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Drowned.java b/src/main/java/net/minecraft/world/entity/monster/Drowned.java
-index c6c86913c0a48501a9109a3838a3e56685d16d79..5fb8617dd108d0be560ca25a626e4551f6cbca2c 100644
+index c6c86913c0a48501a9109a3838a3e56685d16d79..adec06a5171ce77660144c3da9b99e412097a918 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Drowned.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Drowned.java
 @@ -239,7 +239,7 @@ public class Drowned extends Zombie implements RangedAttackMob {
@@ -1082,7 +1083,7 @@ index c6c86913c0a48501a9109a3838a3e56685d16d79..5fb8617dd108d0be560ca25a626e4551
              if (blockPos != null) {
                  double d = this.distanceToSqr((double)blockPos.getX(), (double)blockPos.getY(), (double)blockPos.getZ());
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Strider.java b/src/main/java/net/minecraft/world/entity/monster/Strider.java
-index 0a9246241985d2d97beb865b7163f1d2198f03b8..064e314a2c29300291f0b396f1291271b14c04ac 100644
+index 0a9246241985d2d97beb865b7163f1d2198f03b8..e1a5737be96ddbe88833b81f3d598b644e00eef9 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Strider.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Strider.java
 @@ -561,9 +561,25 @@ public class Strider extends Animal implements ItemSteerable, Saddleable {
@@ -1112,7 +1113,7 @@ index 0a9246241985d2d97beb865b7163f1d2198f03b8..064e314a2c29300291f0b396f1291271
          }
  
 diff --git a/src/main/java/net/minecraft/world/entity/monster/warden/Warden.java b/src/main/java/net/minecraft/world/entity/monster/warden/Warden.java
-index ba9dd96a1d0547e728f2b6d7ddaaff9093a9bce0..7d87374d8521bf091017b6fa177f9699fcbc8896 100644
+index ba9dd96a1d0547e728f2b6d7ddaaff9093a9bce0..64d6491606bad63d833eebaa3aa1336aefcead6d 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/warden/Warden.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/warden/Warden.java
 @@ -597,6 +597,16 @@ public class Warden extends Monster implements VibrationSystem {
@@ -1276,7 +1277,7 @@ index cc7d94144e39f7dace7b569b4567def98396e8f9..e290f6036be9cb4fe0e3e293eadb5d50
          return best;
          // Paper end - Perf: remove streams and optimize collection
 diff --git a/src/main/java/net/minecraft/world/level/pathfinder/SwimNodeEvaluator.java b/src/main/java/net/minecraft/world/level/pathfinder/SwimNodeEvaluator.java
-index 6308822f819d7cb84c8070c8a7eec1a3f822114b..e49851557f991ca1fc2f78abfb819609e672a526 100644
+index 6308822f819d7cb84c8070c8a7eec1a3f822114b..b573e57973c6a0b14982cd65db55be1489df90ac 100644
 --- a/src/main/java/net/minecraft/world/level/pathfinder/SwimNodeEvaluator.java
 +++ b/src/main/java/net/minecraft/world/level/pathfinder/SwimNodeEvaluator.java
 @@ -15,7 +15,7 @@ import net.minecraft.world.level.block.state.BlockState;
