@@ -534,7 +534,7 @@ index 44cd9a9467441035a26bba3f48c4ca7c21b181a7..a827c87545cb6bf865dad48aa148e214
 +    // DeerFolia end - async pathfinding
  }
 diff --git a/src/main/java/net/minecraft/world/entity/ai/behavior/AcquirePoi.java b/src/main/java/net/minecraft/world/entity/ai/behavior/AcquirePoi.java
-index 0d177e828c2b338ce93c58aaef04df326e1eb0b2..2c5fe8059c6d8aa7d3c04eb62bb7b5731370a8ca 100644
+index 0d177e828c2b338ce93c58aaef04df326e1eb0b2..93f68172816c7a31c9b1920cf1aebf2b49ad72d6 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/behavior/AcquirePoi.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/behavior/AcquirePoi.java
 @@ -94,6 +94,39 @@ public class AcquirePoi {
@@ -560,7 +560,7 @@ index 0d177e828c2b338ce93c58aaef04df326e1eb0b2..2c5fe8059c6d8aa7d3c04eb62bb7b573
 +                                                return;
 +                                            }
 +                                            BlockPos blockPos = path.getTarget();
-+                                            poiManager.getType(blockPos).ifPresent(poiType -> {
++                                            poiManager.getTypeWithoutLoad(blockPos).ifPresent(poiType -> {
 +                                                poiManager.take(poiPredicate,
 +                                                        (holder, blockPos2) -> blockPos2.equals(blockPos),
 +                                                        blockPos,
@@ -1014,84 +1014,82 @@ index 92731b6b593289e9f583c9b705b219e81fcd8e73..5237cd25bd00f03381373564385010eb
      }
  }
 diff --git a/src/main/java/net/minecraft/world/entity/ai/village/poi/PoiManager.java b/src/main/java/net/minecraft/world/entity/ai/village/poi/PoiManager.java
-index f3f98e6276dda3bc4f290fc2d80569f7e1e7ef66..4d65147c62a521c77034bd43ea85897548f3805f 100644
+index f3f98e6276dda3bc4f290fc2d80569f7e1e7ef66..d63fb6da65578174d5e356be5fa32eee32ebd5bf 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/village/poi/PoiManager.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/village/poi/PoiManager.java
-@@ -73,7 +73,7 @@ public class PoiManager extends SectionStorage<PoiSection, PoiSection.Packed> im
+@@ -44,6 +44,12 @@ public class PoiManager extends SectionStorage<PoiSection, PoiSection.Packed> im
+     private final PoiManager.DistanceTracker distanceTracker;
+     private final LongSet loadedChunks = new LongOpenHashSet();
+ 
++    // DeerFolia - Async path processing
++    private final java.util.concurrent.locks.ReadWriteLock rwlock = new java.util.concurrent.locks.ReentrantReadWriteLock();
++    private final java.util.concurrent.locks.Lock rlock = rwlock.readLock();
++    private final java.util.concurrent.locks.Lock wlock = rwlock.writeLock();
++    // DeerFolia - Async path processing
++
+     // Paper start - rewrite chunk system
+     private final net.minecraft.server.level.ServerLevel world;
+ 
+@@ -73,11 +79,14 @@ public class PoiManager extends SectionStorage<PoiSection, PoiSection.Packed> im
          final int chunkY = ca.spottedleaf.moonrise.common.util.CoordinateUtils.getChunkSectionY(pos);
          final int chunkZ = ca.spottedleaf.moonrise.common.util.CoordinateUtils.getChunkSectionZ(pos);
  
 -        ca.spottedleaf.moonrise.common.util.TickThread.ensureTickThread(this.world, chunkX, chunkZ, "Accessing poi chunk off-main");
-+        // ca.spottedleaf.moonrise.common.util.TickThread.ensureTickThread(this.world, chunkX, chunkZ, "Accessing poi chunk off-main");
- 
+-
++        rlock.lock();
++        try {
          final ca.spottedleaf.moonrise.patches.chunk_system.level.poi.PoiChunk ret = ((ca.spottedleaf.moonrise.patches.chunk_system.level.ChunkSystemServerLevel)this.world).moonrise$getChunkTaskScheduler().chunkHolderManager.getPoiChunkIfLoaded(chunkX, chunkZ, true);
  
-@@ -86,8 +86,7 @@ public class PoiManager extends SectionStorage<PoiSection, PoiSection.Packed> im
-         final int chunkY = ca.spottedleaf.moonrise.common.util.CoordinateUtils.getChunkSectionY(pos);
-         final int chunkZ = ca.spottedleaf.moonrise.common.util.CoordinateUtils.getChunkSectionZ(pos);
- 
--        ca.spottedleaf.moonrise.common.util.TickThread.ensureTickThread(this.world, chunkX, chunkZ, "Accessing poi chunk off-main");
--
-+        synchronized (this.villageDistanceTracker) { // DeerFolia - petal - Async path processing
-         final ca.spottedleaf.moonrise.patches.chunk_system.scheduling.ChunkHolderManager manager = ((ca.spottedleaf.moonrise.patches.chunk_system.level.ChunkSystemServerLevel)this.world).moonrise$getChunkTaskScheduler().chunkHolderManager;
- 
-         if (chunkY >= ca.spottedleaf.moonrise.common.util.WorldUtil.getMinSection(this.world) && chunkY <= ca.spottedleaf.moonrise.common.util.WorldUtil.getMaxSection(this.world)) {
-@@ -98,6 +97,7 @@ public class PoiManager extends SectionStorage<PoiSection, PoiSection.Packed> im
-                 return manager.loadPoiChunk(chunkX, chunkZ).getSectionForVanilla(chunkY);
-             }
-         }
-+        } // DeerFolia - petal - Async path processing
-         // retain vanilla behavior: do not load section if out of bounds!
-         return Optional.empty();
-     }
-@@ -108,8 +108,7 @@ public class PoiManager extends SectionStorage<PoiSection, PoiSection.Packed> im
-         final int chunkY = ca.spottedleaf.moonrise.common.util.CoordinateUtils.getChunkSectionY(pos);
-         final int chunkZ = ca.spottedleaf.moonrise.common.util.CoordinateUtils.getChunkSectionZ(pos);
- 
--        ca.spottedleaf.moonrise.common.util.TickThread.ensureTickThread(this.world, chunkX, chunkZ, "Accessing poi chunk off-main");
--
-+        synchronized (this.villageDistanceTracker) { // DeerFolia - petal - Async path processing
-         final ca.spottedleaf.moonrise.patches.chunk_system.scheduling.ChunkHolderManager manager = ((ca.spottedleaf.moonrise.patches.chunk_system.level.ChunkSystemServerLevel)this.world).moonrise$getChunkTaskScheduler().chunkHolderManager;
- 
-         final ca.spottedleaf.moonrise.patches.chunk_system.level.poi.PoiChunk ret = manager.getPoiChunkIfLoaded(chunkX, chunkZ, true);
-@@ -118,6 +117,7 @@ public class PoiManager extends SectionStorage<PoiSection, PoiSection.Packed> im
-         } else {
-             return manager.loadPoiChunk(chunkX, chunkZ).getOrCreateSection(chunkY);
-         }
-+        } // DeerFolia - petal - Async path processing
+         return ret == null ? Optional.empty() : ret.getSectionForVanilla(chunkY);
++        } finally {
++            rlock.unlock();
++        }
      }
  
      @Override
-@@ -133,11 +133,12 @@ public class PoiManager extends SectionStorage<PoiSection, PoiSection.Packed> im
-         final int minY = ca.spottedleaf.moonrise.common.util.WorldUtil.getMinSection(this.world);
-         final int maxY = ca.spottedleaf.moonrise.common.util.WorldUtil.getMaxSection(this.world);
+@@ -290,15 +299,28 @@ public class PoiManager extends SectionStorage<PoiSection, PoiSection.Packed> im
  
--        ca.spottedleaf.moonrise.common.util.TickThread.ensureTickThread(this.world, chunkX, chunkZ, "Unloading poi chunk off-main");
-+        synchronized (this.villageDistanceTracker) { // DeerFolia - petal - Async path processing
-         for (int sectionY = minY; sectionY <= maxY; ++sectionY) {
-             final long sectionPos = SectionPos.asLong(chunkX, sectionY, chunkZ);
-             this.updateDistanceTracking(sectionPos);
-         }
-+        } // DeerFolia - petal - Async path processing
+     public Optional<BlockPos> take(Predicate<Holder<PoiType>> typePredicate, BiPredicate<Holder<PoiType>, BlockPos> posPredicate, BlockPos pos, int radius) {
+         // Paper start - re-route to faster logic
+-        final @javax.annotation.Nullable PoiRecord closest = io.papermc.paper.util.PoiAccess.findClosestPoiDataRecord(
++        // DeerFolia - Async path processing
++        rlock.lock();
++        final @javax.annotation.Nullable PoiRecord closest;
++        try {
++        closest = io.papermc.paper.util.PoiAccess.findClosestPoiDataRecord(
+             this, typePredicate, posPredicate, pos, radius, radius * radius, Occupancy.HAS_SPACE, false
+         );
++        } finally {
++            rlock.unlock();
++        }
++        wlock.lock();
++        try {
+         return Optional.ofNullable(closest)
+             // Paper end - re-route to faster logic
+             .map(poi -> {
+                 poi.acquireTicket();
+                 return poi.getPos();
+             });
++        } finally {
++            wlock.unlock();
++        }
++        // DeerFolia - Async path processing
      }
  
-     @Override
-@@ -148,13 +149,14 @@ public class PoiManager extends SectionStorage<PoiSection, PoiSection.Packed> im
-         final int minY = ca.spottedleaf.moonrise.common.util.WorldUtil.getMinSection(this.world);
-         final int maxY = ca.spottedleaf.moonrise.common.util.WorldUtil.getMaxSection(this.world);
- 
--        ca.spottedleaf.moonrise.common.util.TickThread.ensureTickThread(this.world, chunkX, chunkZ, "Loading poi chunk off-main");
-+        synchronized (this.villageDistanceTracker) { // DeerFolia - petal - Async path processing
-         for (int sectionY = minY; sectionY <= maxY; ++sectionY) {
-             final PoiSection section = poiChunk.getSection(sectionY);
-             if (section != null && !((ca.spottedleaf.moonrise.patches.chunk_system.level.poi.ChunkSystemPoiSection)section).moonrise$isEmpty()) {
-                 this.onSectionLoad(SectionPos.asLong(chunkX, sectionY, chunkZ));
-             }
-         }
-+        } // DeerFolia - petal - Async path processing
+     public Optional<BlockPos> getRandom(
+@@ -336,6 +358,12 @@ public class PoiManager extends SectionStorage<PoiSection, PoiSection.Packed> im
+         return this.getOrLoad(SectionPos.asLong(pos)).map(poiSet -> poiSet.exists(pos, predicate)).orElse(false);
      }
  
-     @Override
++    // DeerFolia - Async path processing
++    public Optional<Holder<PoiType>> getTypeWithoutLoad(BlockPos pos) {
++        return this.get(SectionPos.asLong(pos)).flatMap(poiSet -> poiSet.getType(pos));
++    }
++    // DeerFolia - Async path processing
++
+     public Optional<Holder<PoiType>> getType(BlockPos pos) {
+         return this.getOrLoad(SectionPos.asLong(pos)).flatMap(poiSet -> poiSet.getType(pos));
+     }
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Bee.java b/src/main/java/net/minecraft/world/entity/animal/Bee.java
 index 63ee0cd25cf595196ad67d90737daf7826925b2a..94062c9734794366dd535427a8cf575bf04d73c9 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Bee.java
