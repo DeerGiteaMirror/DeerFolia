@@ -976,7 +976,7 @@ index 943c9944ae17fa7cd72e437cce61beaf3fc9505e..32df610ac69d5dcf4216feffdeef2096
      }
  
 diff --git a/src/main/java/net/minecraft/world/entity/ai/sensing/NearestBedSensor.java b/src/main/java/net/minecraft/world/entity/ai/sensing/NearestBedSensor.java
-index 92731b6b593289e9f583c9b705b219e81fcd8e73..5237cd25bd00f03381373564385010ebe2745f7e 100644
+index 92731b6b593289e9f583c9b705b219e81fcd8e73..93e2844f9adbbeb0852ba7e26e555f5f2e4e490a 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/sensing/NearestBedSensor.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/sensing/NearestBedSensor.java
 @@ -57,6 +57,25 @@ public class NearestBedSensor extends Sensor<Mob> {
@@ -995,7 +995,7 @@ index 92731b6b593289e9f583c9b705b219e81fcd8e73..5237cd25bd00f03381373564385010eb
 +                    if (path == null) return;
 +
 +                    BlockPos blockPos = path.getTarget();
-+                    Optional<Holder<PoiType>> optional = poiManager.getType(blockPos);
++                    Optional<Holder<PoiType>> optional = poiManager.getTypeWithoutLoad(blockPos);
 +                    if (optional.isPresent()) {
 +                        entity.getBrain().setMemory(MemoryModuleType.NEAREST_BED, blockPos);
 +                    }
