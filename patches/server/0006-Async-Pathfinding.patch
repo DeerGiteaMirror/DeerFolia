@@ -712,10 +712,10 @@ index 2a7a26ca447cc78f24e61a2bf557411c31eb16b2..80b23a9b5c78a4ed61d137b9fb954a09
      private boolean tryComputePath(Mob entity, WalkTarget walkTarget, long time) {
          BlockPos blockPos = walkTarget.getTarget().currentBlockPosition();
 diff --git a/src/main/java/net/minecraft/world/entity/ai/behavior/SetClosestHomeAsWalkTarget.java b/src/main/java/net/minecraft/world/entity/ai/behavior/SetClosestHomeAsWalkTarget.java
-index 6802e0c4d331c7125114dd86409f6a110465ab82..5af7b1ec51a110a1dabb575a635896fdb1ebac6a 100644
+index 6802e0c4d331c7125114dd86409f6a110465ab82..eebfb465e26a8f3da2cb0bfb94d805d20052dc2a 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/behavior/SetClosestHomeAsWalkTarget.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/behavior/SetClosestHomeAsWalkTarget.java
-@@ -60,10 +60,30 @@ public class SetClosestHomeAsWalkTarget {
+@@ -60,6 +60,26 @@ public class SetClosestHomeAsWalkTarget {
                                                  poiType -> poiType.is(PoiTypes.HOME), predicate, entity.blockPosition(), 48, PoiManager.Occupancy.ANY
                                              )
                                              .collect(Collectors.toSet());
@@ -731,7 +731,7 @@ index 6802e0c4d331c7125114dd86409f6a110465ab82..5af7b1ec51a110a1dabb575a635896fd
 +                                                    return;
 +                                                }
 +                                                BlockPos blockPos = path.getTarget();
-+                                                Optional<Holder<PoiType>> optional2 = poiManager.getType(blockPos);
++                                                Optional<Holder<PoiType>> optional2 = poiManager.getTypeWithoutLoad(blockPos);
 +                                                if (optional2.isPresent()) {
 +                                                    walkTarget.set(new WalkTarget(blockPos, speed, 1));
 +                                                    DebugPackets.sendPoiTicketCountPacket(world, blockPos);
@@ -742,11 +742,6 @@ index 6802e0c4d331c7125114dd86409f6a110465ab82..5af7b1ec51a110a1dabb575a635896fd
                                          Path path = AcquirePoi.findPathToPois(entity, set);
                                          if (path != null && path.canReach()) {
                                              BlockPos blockPos = path.getTarget();
--                                            Optional<Holder<PoiType>> optional2 = poiManager.getType(blockPos);
-+                                            Optional<Holder<PoiType>> optional2 = poiManager.getTypeWithoutLoad(blockPos);
-                                             if (optional2.isPresent()) {
-                                                 walkTarget.set(new WalkTarget(blockPos, speed, 1));
-                                                 DebugPackets.sendPoiTicketCountPacket(world, blockPos);
 @@ -71,6 +91,7 @@ public class SetClosestHomeAsWalkTarget {
                                          } else if (mutableInt.getValue() < 5) {
                                              long2LongMap.long2LongEntrySet().removeIf(entry -> entry.getLongValue() < mutableLong.getValue());
