@@ -862,7 +862,7 @@ index 45b68a139956f2d59c8b9658692d01f1f79d33cc..2377691a99dd4795cc1e862ea4a4dad9
      }
  
 diff --git a/src/main/java/net/minecraft/world/entity/ai/navigation/PathNavigation.java b/src/main/java/net/minecraft/world/entity/ai/navigation/PathNavigation.java
-index 71885b8b3f491fbe644efef02aebdd8b9f03a10b..ab30fd2d09a1265c291e3d83091aa40326128088 100644
+index 71885b8b3f491fbe644efef02aebdd8b9f03a10b..20f120ed8500ae8d3c1a40443f08234eac6f1898 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/navigation/PathNavigation.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/navigation/PathNavigation.java
 @@ -168,6 +168,10 @@ public abstract class PathNavigation {
@@ -876,10 +876,10 @@ index 71885b8b3f491fbe644efef02aebdd8b9f03a10b..ab30fd2d09a1265c291e3d83091aa403
          } else if (this.path != null && !this.path.isDone() && positions.contains(this.targetPos)) {
              return this.path;
          } else {
-@@ -194,12 +198,30 @@ public abstract class PathNavigation {
-             int i = (int)(followRange + (float)range);
+@@ -195,11 +199,29 @@ public abstract class PathNavigation {
              PathNavigationRegion pathNavigationRegion = new PathNavigationRegion(this.level, blockPos.offset(-i, -i, -i), blockPos.offset(i, i, i));
              Path path = this.pathFinder.findPath(pathNavigationRegion, this.mob, positions, followRange, distance, this.maxVisitedNodesMultiplier);
+             profilerFiller.pop();
 +            // DeerFolia start - petal - async path processing
 +            if (io.papermc.paper.configuration.GlobalConfiguration.get().asyncPathfinding.enabled) {
 +                // assign early a target position. most calls will only have 1 position
@@ -896,8 +896,7 @@ index 71885b8b3f491fbe644efef02aebdd8b9f03a10b..ab30fd2d09a1265c291e3d83091aa403
 +                    }
 +                });
 +            } else {
-+                // DeerFolia end
-             profilerFiller.pop();
++            // DeerFolia end
              if (path != null && path.getTarget() != null) {
                  this.targetPos = path.getTarget();
                  this.reachRange = distance;
