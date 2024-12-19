@@ -23,6 +23,9 @@ DeerFolia 是一个基于 [Folia](https://papermc.io/software/folia) 的 Minecra
 ## 额外配置
 
 ### Dynamic Activation of Brain
+
+通过动态调整实体的激活频率，减少了不必要的计算，提升了服务器的性能。
+
 ```yaml
 # config/paper-global.yml
 dynamic-activation-brain:
@@ -40,6 +43,9 @@ dynamic-activation-brain:
 > 通常情况下，`activation-distance-mod` 推荐设置为 7 或 8，`start-distance` 推荐设置为 12。
 
 ### Async Path Finding
+
+引入异步路径查找和相关的机制，提升了路径查找的性能和响应速度。
+
 ```yaml
 # config/paper-global.yml
 async-pathfinding:
