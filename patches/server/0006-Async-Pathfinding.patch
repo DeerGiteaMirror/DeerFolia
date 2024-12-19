@@ -1225,6 +1225,35 @@ index 0a9246241985d2d97beb865b7163f1d2198f03b8..e1a5737be96ddbe88833b81f3d598b64
              return new PathFinder(this.nodeEvaluator, range);
          }
  
+diff --git a/src/main/java/net/minecraft/world/entity/monster/ZombifiedPiglin.java b/src/main/java/net/minecraft/world/entity/monster/ZombifiedPiglin.java
+index 03e3cbe73119ca76417d4dd192e1560bdfc373ec..44ef8fb36b6f62cc1a0dd0eefdd33206e5f28e24 100644
+--- a/src/main/java/net/minecraft/world/entity/monster/ZombifiedPiglin.java
++++ b/src/main/java/net/minecraft/world/entity/monster/ZombifiedPiglin.java
+@@ -58,6 +58,16 @@ public class ZombifiedPiglin extends Zombie implements NeutralMob {
+     private int ticksUntilNextAlert;
+     private HurtByTargetGoal pathfinderGoalHurtByTarget; // Paper - fix PigZombieAngerEvent cancellation
+ 
++    // Deer Folia - Start Async Pathfinding - shadowing the target to not screw up the folia logic
++    // if not, the async pathfinding can't get the target from the entity region thread
++    private final java.util.concurrent.atomic.AtomicReference<LivingEntity> localTarget = new java.util.concurrent.atomic.AtomicReference<>();
++    @Nullable
++    @Override
++    public LivingEntity getTarget() {
++        return localTarget.get();
++    }
++    // Deer Folia - End Async Pathfinding
++
+     public ZombifiedPiglin(EntityType<? extends ZombifiedPiglin> type, Level world) {
+         super(type, world);
+         this.setPathfindingMalus(PathType.LAVA, 8.0F);
+@@ -169,6 +179,7 @@ public class ZombifiedPiglin extends Zombie implements NeutralMob {
+             this.setLastHurtByPlayer((Player) entityliving);
+         }
+ 
++        localTarget.set(entityliving); // Deer Folia - Start Async Pathfinding
+         return super.setTarget(entityliving, reason, fireEvent); // CraftBukkit
+     }
+ 
 diff --git a/src/main/java/net/minecraft/world/entity/monster/warden/Warden.java b/src/main/java/net/minecraft/world/entity/monster/warden/Warden.java
 index ba9dd96a1d0547e728f2b6d7ddaaff9093a9bce0..64d6491606bad63d833eebaa3aa1336aefcead6d 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/warden/Warden.java
