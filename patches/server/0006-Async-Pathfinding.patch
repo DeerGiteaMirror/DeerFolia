@@ -1233,7 +1233,7 @@ index 03e3cbe73119ca76417d4dd192e1560bdfc373ec..44ef8fb36b6f62cc1a0dd0eefdd33206
      private int ticksUntilNextAlert;
      private HurtByTargetGoal pathfinderGoalHurtByTarget; // Paper - fix PigZombieAngerEvent cancellation
  
-+    // Deer Folia - Start Async Pathfinding - shadowing the target to not screw up the folia logic
++    // DeerFolia - Start Async Pathfinding - shadowing the target to not screw up the folia logic
 +    // if not, the async pathfinding can't get the target from the entity region thread
 +    private final java.util.concurrent.atomic.AtomicReference<LivingEntity> localTarget = new java.util.concurrent.atomic.AtomicReference<>();
 +    @Nullable
@@ -1241,7 +1241,7 @@ index 03e3cbe73119ca76417d4dd192e1560bdfc373ec..44ef8fb36b6f62cc1a0dd0eefdd33206
 +    public LivingEntity getTarget() {
 +        return localTarget.get();
 +    }
-+    // Deer Folia - End Async Pathfinding
++    // DeerFolia - End Async Pathfinding
 +
      public ZombifiedPiglin(EntityType<? extends ZombifiedPiglin> type, Level world) {
          super(type, world);
@@ -1250,7 +1250,7 @@ index 03e3cbe73119ca76417d4dd192e1560bdfc373ec..44ef8fb36b6f62cc1a0dd0eefdd33206
              this.setLastHurtByPlayer((Player) entityliving);
          }
  
-+        localTarget.set(entityliving); // Deer Folia - Start Async Pathfinding
++        localTarget.set(entityliving); // DeerFolia - Async Pathfinding
          return super.setTarget(entityliving, reason, fireEvent); // CraftBukkit
      }
  
