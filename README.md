@@ -4,23 +4,62 @@ DeerFolia 是一个基于 [Folia](https://papermc.io/software/folia) 的 Minecra
 
 而 Folia 是由  [Paper](https://papermc.io/software/paper) 修改而来，Paper 核心修复了很多原版 Minecraft 的有趣特性，由于 Folia 直接继承自 Paper，因此也同时继承了这些消失的特性。这也是为什么很多服主选择了 Purpur，不过 Purpur 官方已经明确表示不会基于 Folia 开发一个新的具备原版特性的分支。
 
-<div style="text-align: center;">
-
-<img src="https://ssl.lunadeer.cn:14437/i/2024/04/01/660a164f1873d.png" alt="" width="70%">
-
-</div>
-
 ## 本分支相比于其他 Folia 分支有何特点？
 
 ### 1. 最小修改：在还原原版机制的基础上保持对 Folia 及上游 Paper 相关补丁的最小修改，避免潜在的意外bug；
 
-### 2. 无需配置：不引入任何自定义的配置，虽然这意味着本分支的特性无法自行开关，但同时也减轻了部署负担，不用去理解额外的配置内容；
+### 2. 最少配置：尽可能减少自定义的配置，减轻了部署负担，不用面对复杂的配置内容；
+
+### 3. 性能优化：在 Folia 基础上引入更多的优化，进步一提升单个 region 的性能；
 
 ## 此分支特性
 
+- 还原了 [刷沙机制](patches/server/0003-Allow-sand-duplication.patch)（虽然 paper 已支持刷沙，但由于 folia 的特性，paper 的刷沙开关在 folia 是无效的）；
+- [Dynamic Activation of Brain (Pufferfish)](patches/server/0005-Dynamic-Activation-Brain.patch)；
+- [Async Path Finding (Pufferfish)](patches/server/0006-Async-Pathfinding.patch)；
 - ~~还原了 [虚空交易](https://ssl.lunadeer.cn:14446/zhangyuheng/DeerFolia/src/branch/master/patches/server/0002-Allow-void-trading.patch)~~（疑似已被 mojang 官方修复）；
-- 还原了 [刷沙机制](https://ssl.lunadeer.cn:14446/zhangyuheng/DeerFolia/src/branch/master/patches/server/0003-Sand-duplication.patch)（虽然 paper 已支持刷沙，但由于 folia 的特性，paper 的刷沙开关在 folia 是无效的）；
 - ~~还原了 [刷线机制](https://ssl.lunadeer.cn:14446/zhangyuheng/DeerFolia/src/branch/master/patches/server/0004-Allow-tripwire-duplication.patch)~~（mojang已在1.21.3修复）；
+
+## 额外配置
+
+### Dynamic Activation of Brain
+
+通过动态调整实体的激活频率，减少了不必要的计算，提升了服务器的性能。
+
+```yaml
+# config/paper-global.yml
+dynamic-activation-brain:
+   activation-distance-mod: 8
+   dear-enabled: true
+   maximum-activation-prio: 20
+   start-distance: 12
+```
+- `dear-enabled`：是否启用；
+- `activation-distance-mod`：递减倍数；
+- `maximum-activation-prio`：最大停顿（如果设置为20则表示无论多远，每20tick都至少计算一次）；
+- `start-distance`：开始递减的距离；
+
+> 如果刷怪塔收到影响可以尝试减少 `activation-distance-mod` 或者增加 `start-distance`。
+> 通常情况下，`activation-distance-mod` 推荐设置为 7 或 8，`start-distance` 推荐设置为 12。
+
+### Async Path Finding
+
+引入异步路径查找和相关的机制，提升了路径查找的性能和响应速度。
+
+```yaml
+# config/paper-global.yml
+async-pathfinding:
+   async-pathfinding-keepalive: 60
+   async-pathfinding-max-threads: 20
+   enabled: true
+```
+
+- `enabled`：是否启用；
+- `async-pathfinding-keepalive`：单个线程最大活跃时间；
+- `async-pathfinding-max-threads`：用于异步寻路的线程池大小；
+
+> 线程池本质上为虚拟线程，与cpu物理核心无关。过少的线程池大小可能会对性能提升不明显，过多通常不会有明显的负面影响但是可能会影响java的GC。
+> 推荐 `async-pathfinding-max-threads` 为 10-20 之间。
 
 ## 如何自行编译
 
