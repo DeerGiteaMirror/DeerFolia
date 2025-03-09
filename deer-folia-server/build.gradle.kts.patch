@@ -1,0 +1,11 @@
+--- a/folia-server/build.gradle.kts
++++ b/folia-server/build.gradle.kts
+@@ -147,7 +_,7 @@
+ }
+ 
+ dependencies {
+-    implementation(project(":folia-api"))
++    implementation(project(":deer-folia-api"))
+     implementation("ca.spottedleaf:concurrentutil:0.0.2")
+     implementation("org.jline:jline-terminal-ffm:3.27.1") // use ffm on java 22+
+     implementation("org.jline:jline-terminal-jni:3.27.1") // fall back to jni on java 21
