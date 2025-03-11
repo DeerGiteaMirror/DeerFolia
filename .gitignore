@@ -1,16 +1,13 @@
 .gradle
 build/
-!gradle/wrapper/gradle-wrapper.jar
-!**/src/main/**/build/
-!**/src/test/**/build/
 
 /deer-folia-server/build.gradle.kts
-/deer-folia-server/src/minecraft
-/paper-server
 /deer-folia-api/build.gradle.kts
+/folia-server/build.gradle.kts
+/folia-server/src/minecraft
+/folia-api/build.gradle.kts
+/paper-server
 /paper-api
-/folia-api
-/paper-api-generator
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
