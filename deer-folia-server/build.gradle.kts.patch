@@ -1,5 +1,44 @@
 --- a/folia-server/build.gradle.kts
 +++ b/folia-server/build.gradle.kts
+@@ -22,6 +_,7 @@
+     // gitFilePatches = true
+     
+     val fork = forks.register("folia") {
++        rootDirectory = upstreamsDirectory().map { it.dir("folia") }
+         upstream.patchDir("paperServer") {
+             upstreamPath = "paper-server"
+             excludes = setOf("src/minecraft", "patches", "build.gradle.kts")
+@@ -30,7 +_,29 @@
+         }
+     }
+ 
+-    activeFork = fork
++    val deerfolia = forks.register("deer-folia") {
++        forks = fork
++        upstream.patchRepo("paperServer") {
++            upstreamRepo = fork.patchedRepo("paperServer")
++            patchesDir = rootDirectory.dir("deer-folia-server/paper-patches")
++            outputDir = rootDirectory.dir("paper-server")
++        }
++
++        upstream.patchDir("foliaServer") {
++            upstreamPath = "folia-server"
++            excludes = setOf(
++                "src/minecraft",
++                "paper-patches",
++                "minecraft-patches",
++                "build.gradle.kts",
++                "build.gradle.kts.patch"
++            )
++            patchesDir = rootDirectory.dir("deer-folia-server/folia-patches")
++            outputDir = rootDirectory.dir("folia-server")
++        }
++    }
++
++    activeFork = deerfolia
+ 
+     spigot {
+         buildDataRef = "3edaf46ec1eed4115ce1b18d2846cded42577e42"
 @@ -143,7 +_,7 @@
  }
  
