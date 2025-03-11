@@ -64,15 +64,15 @@ async-pathfinding:
 ## 如何自行编译
 
 1. 克隆本仓库到本地；
-2. 在终端执行 `./gradlew applyPatches` 应用补丁；
+2. 在终端执行 `./gradlew applyAllPatches` 应用补丁；
 3. 完成后会在项目目录下生成 `deer-folia-server` 和 `deer-folia-api` ，前者即为源码目录;
-4. 执行 `./gradlew createReobfPaperclipJar` ，完成后会在 `build/libs` 下生成服务器核心文件；
+4. 执行 `./gradlew createMojmapPaperclipJar` ，完成后会在 `deer-folia-server/build/libs` 下生成服务器核心文件；
 
 ## 如何添加新补丁
 
 1. 修改 `deer-folia-server` 或 `deer-folia-api` 中的源码；
 2. 在 `deer-folia-server` 或 `deer-folia-api` 目录中将修改内容添加 `git add .` 并提交 `git commit` ，填写补丁信息；
-3. 在根目录运行 `./gradlew rebuildPatches` ，将刚才提交的修改生成为新补丁；
+3. 在根目录运行 `./gradlew rebuildAllServerPatches` ，将刚才提交的修改生成为新补丁；
 
 ## 修改已有补丁
 

@@ -6,5 +6,7 @@
     <mapping directory="$PROJECT_DIR$/deer-folia-server/src/minecraft/resources" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/folia-api" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/folia-server" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/paper-api" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/paper-server" vcs="Git" />
   </component>
 </project>

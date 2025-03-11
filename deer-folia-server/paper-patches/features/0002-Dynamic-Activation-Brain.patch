@@ -1,0 +1,24 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: zhangyuheng <zhangyuheng@lunadeer.cn>
+Date: Tue, 11 Mar 2025 14:31:11 +0800
+Subject: [PATCH] Dynamic Activation Brain
+
+
+diff --git a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
+index de88c3d9d3523a7bd3f3dcbfc62d72658192521d..354c4758d8d0fbc0fd79fa346795d4c9473481d1 100644
+--- a/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
++++ b/src/main/java/io/papermc/paper/configuration/GlobalConfiguration.java
+@@ -411,4 +411,13 @@ public class GlobalConfiguration extends ConfigurationPart {
+         }
+     }
+     // Folia end - threaded regions
++    // DeerFolia start - puffish DAB (Dynamic Activation Brain)
++    public DynamicActivationBrain dynamicActivationBrain;
++    public class DynamicActivationBrain extends ConfigurationPart {
++        public boolean dearEnabled = true;
++        public int startDistance = 12;
++        public int maximumActivationPrio = 20;
++        public int activationDistanceMod = 8;
++    }
++    // DeerFolia end - puffish DAB
+ }
