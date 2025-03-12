@@ -70,9 +70,19 @@ async-pathfinding:
 
 ## 如何添加新补丁
 
+### 对上游代码修改
+
 1. 修改 `deer-folia-server` 或 `deer-folia-api` 中的源码；
 2. 在 `deer-folia-server` 或 `deer-folia-api` 目录中将修改内容添加 `git add .` 并提交 `git commit` ，填写补丁信息；
 3. 在根目录运行 `./gradlew rebuildAllServerPatches` ，将刚才提交的修改生成为新补丁；
+
+### 新增文件
+
+1. 在 `paper-server` 中新增相关文件；
+2. 不提交变更，直接运行 `./gradlew fixupPaperServerFilePatches`；
+3. 随后运行 `./gradlew rebuildPaperServerFilePatches` 即可在 `deer-folia-server/paper-patches/files` 下生成文件级补丁；
+
+> 通过将与上游源码无关的新增文件独立为文件级 patch，减少对上游修改 patch 文件的长度使得项目更易于维护。
 
 ## 修改已有补丁
 
@@ -126,11 +136,11 @@ async-pathfinding:
 ## 更新上游 Folia 修改
 
 1. 在终端执行 `./gradlew updateFoliaRef` 更新上游 Folia 修改；
-2. 应用更新的补丁：`./gradlew applyPatches`。
+2. 应用更新的补丁：`./gradlew applyAllPatches`。
 3. 如果存在冲突，解决冲突后执行 `git add .` 将解决完的文件添加到暂存区；
    - 如果遇到 `invalid object` 错误，可以使用 `git apply --reject <patch file>` 手动应用补丁；
    - 会生成 `.rej` 文件，可在其中查看冲突内容，手动解决冲突；
    - 完成后删除 `.rej` 文件，然后执行 `git add .`；
 4. 然后运行 `git am --resolved` 继续应用补丁；
 5. 如果存在新的冲突，重复步骤 3 和 4；
-6. 全部补丁应用完成后，更新补丁：`./gradlew rebuildPatches`。
+6. 全部补丁应用完成后，更新补丁：`./gradlew rebuildServerPatches`。
